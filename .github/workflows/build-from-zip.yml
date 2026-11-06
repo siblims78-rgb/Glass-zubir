@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Extract uploaded source
         run: |
-          unzip -o -q GlassONN-Upload.zip
+          unzip -o -q GlassONN-v0.2-Download.zip
           test -f settings.gradle
       - uses: actions/setup-java@v4
         with:
