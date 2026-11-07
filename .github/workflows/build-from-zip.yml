@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Extract uploaded source
         run: |
-          unzip -o -q GlassONN-v0.5.4-Download.zip
+          unzip -o -q GlassONN-v0.5.5-Download.zip
           test -f settings.gradle
           sed -i 's/places\[getPlace()\]/places[MainActivity.this.getPlace()]/g' app/src/main/java/com/glassonn/home/MainActivity.java
       - uses: actions/setup-java@v4
