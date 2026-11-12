@@ -4,11 +4,11 @@ android {
     namespace 'com.glassonn.home'
     compileSdk 34
     defaultConfig {
-        applicationId 'com.glassonn.home.v065'
+        applicationId 'com.glassonn.home.v067'
         minSdk 26
         targetSdk 34
-        versionCode 21
-        versionName '0.6.5'
+        versionCode 23
+        versionName '0.6.7'
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17

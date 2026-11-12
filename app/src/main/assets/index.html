@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ms"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
-<title>Glass ONN v0.6.5 · TV</title>
+<title>Glass ONN v0.6.7 · Cinema UI Preview</title>
 <style>
 :root{color-scheme:dark;--glass:rgba(11,24,37,.40);--border:rgba(235,248,255,.25);--ink:#f4fbff;--muted:#b7c6db;--accent:#9deafd;--radius:24px}
 *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#0b1429;font-family:Arial,"Noto Sans",sans-serif;color:var(--ink)}
@@ -848,6 +848,33 @@ html[data-theme]:not([data-theme="glass"]) #settings button:focus-visible{
 @media(prefers-reduced-motion:reduce){#ui>.header,#ui>.hero,#homeScrollCue{transition:none!important}
  #ui #homeShelfViewport{scroll-behavior:auto!important}}
 
+
+/* Finish solid palettes throughout dialogs, ancillary controls and status chips. */
+html[data-theme]:not([data-theme="glass"]) #settings .settingsBrandMark,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsStatus,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsBottom,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsExit,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsIntegrationMark,
+html[data-theme]:not([data-theme="glass"]) #settings .traktDevice,
+html[data-theme]:not([data-theme="glass"]) #settings .wallpaper-choice{
+  background:var(--t-card)!important;color:var(--t-fg)!important;
+  border-color:var(--t-line)!important;box-shadow:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html[data-theme]:not([data-theme="glass"]) #settings .navGlyph,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsEyebrow,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsBrand b{color:var(--t-focus)!important}
+html[data-theme]:not([data-theme="glass"]) #settings .settingsBottom,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsGroup .note{color:var(--t-muted)!important}
+html[data-theme]:not([data-theme="glass"]) #settings .themeChoice:focus,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsNavItem:focus,
+html[data-theme]:not([data-theme="glass"]) #settings .wallpaper-choice:focus{
+  outline:2px solid var(--t-focus)!important;box-shadow:none!important}
+html[data-theme]:not([data-theme="glass"]) #ui .homeTrendMore,
+html[data-theme]:not([data-theme="glass"]) #ui .weatherTest{
+  background:var(--t-card)!important;color:var(--t-fg)!important;
+  border-color:var(--t-line)!important;box-shadow:none!important}
+html[data-theme]:not([data-theme="glass"]) #ui .traktProgress span{background:var(--t-focus)!important}
+html[data-theme]:not([data-theme="glass"]) #ui .app:focus .appname{color:#fff!important;text-shadow:0 2px 7px #000a!important}
 </style></head><body>
 <div class="wallpaper" id="w1"></div><div class="wallpaper" id="w2" style="opacity:0"></div><div class="wallpaper" id="w3" style="opacity:0"></div><div class="wallpaper" id="w4" style="opacity:0"></div><div class="wallpaper" id="customImage" style="opacity:0"></div><div class="wallpaper" id="onlineWallpaper" style="opacity:0"></div><div class="wallpaper" id="focusBackdrop" aria-hidden="true"></div><div id="shade"></div>
 <nav id="cinemaRail" aria-label="Navigasi Glass ONN">
@@ -874,7 +901,7 @@ html[data-theme]:not([data-theme="glass"]) #settings button:focus-visible{
 </div>
 <div id="settings" role="dialog" aria-modal="true" aria-label="Glass ONN Settings"><div class="modal settingsShell">
 <aside class="settingsSidebar" aria-label="Settings navigation">
-  <div class="settingsBrand"><span class="settingsBrandMark">G</span><span>GLASS <b>ONN</b><small>SETTINGS · v0.6.4</small></span></div>
+  <div class="settingsBrand"><span class="settingsBrandMark">G</span><span>GLASS <b>ONN</b><small>SETTINGS · v0.6.7</small></span></div>
   <div class="settingsNav">
     <button class="settingsNavItem active" data-settings-tab="appearance" onclick="switchSettingsTab('appearance')"><span class="navGlyph">◈</span><span data-en="Appearance" data-ms="Penampilan">Appearance</span></button>
     <button class="settingsNavItem" data-settings-tab="home" onclick="switchSettingsTab('home')"><span class="navGlyph">⌂</span><span data-en="Home Screen" data-ms="Skrin Utama">Home Screen</span></button>
@@ -911,7 +938,7 @@ html[data-theme]:not([data-theme="glass"]) #settings button:focus-visible{
     <div class="settingsGroup"><h3>Phone Companion</h3><p class="settingsHint" data-en="Scan with your phone camera to open Companion. Connect phone and TV to the same Wi-Fi." data-ms="Imbas dengan kamera telefon untuk buka Companion. Telefon dan TV mesti pada Wi-Fi yang sama.">Scan with your phone camera to open Companion. Connect phone and TV to the same Wi-Fi.</p><div class="companionPairRow"><div class="companionQrFrame"><canvas id="companionQr" width="220" height="220" role="img" aria-label="Companion connection QR code" hidden></canvas><div id="companionQrEmpty">Waiting for local address</div></div><div class="companionPairDetails"><p class="settingsStatus" id="companionUrl">Checking local address…</p><p class="companionPairPin" id="companionPin">Pairing PIN: —</p><p class="settingsHint" data-en="Scan QR → open Companion → enter PIN from this TV. No account required." data-ms="Imbas QR → buka Companion → masukkan PIN dari TV ini. Tak perlu akaun.">Scan QR → open Companion → enter PIN from this TV. No account required.</p><button class="button" onclick="updateCompanionInfo()" data-en="↻ Refresh QR" data-ms="↻ Muat semula QR">↻ Refresh QR</button></div></div><p class="settingsHint" data-en="Use a trusted home network. Local Companion uses HTTP, so never enter private credentials through it." data-ms="Gunakan rangkaian rumah dipercayai. Companion menggunakan HTTP setempat, jadi jangan masukkan maklumat rahsia melaluinya.">Use a trusted home network. Local Companion uses HTTP, so never enter private credentials through it.</p></div>
   </section>
   <section class="settingsPage" data-settings-page="about">
-    <div class="settingsGroup"><h3>Glass ONN Launcher</h3><p class="settingsHint">Version 0.6.4 · Personal Android TV launcher</p><p class="settingsHint">Weather from Open-Meteo · Prayer times from solat.my · Film metadata from selected catalogues.</p></div>
+    <div class="settingsGroup"><h3>Glass ONN Launcher</h3><p class="settingsHint">Version 0.6.7 · Cinema layout preview</p><p class="settingsHint">Weather from Open-Meteo · Prayer times from solat.my · Film metadata from selected catalogues.</p></div>
     <div class="settingsGroup"><h3>Nature Audio Credits</h3><p class="settingsHint">Birds forest · barracuda1983 · public domain · Wikimedia Commons.</p><p class="settingsHint">Water drops dripping · ZooFari · CC BY-SA 3.0 · Wikimedia Commons. Used without modification.</p><p class="settingsHint">https://commons.wikimedia.org/wiki/File:Birds_forest.ogg<br>https://commons.wikimedia.org/wiki/File:Water_drops_dripping.ogg</p><p class="settingsHint">https://creativecommons.org/licenses/by-sa/3.0/</p></div>
     <div class="settingsGroup"><h3>Privacy</h3><p class="settingsHint">Trakt and TMDB credentials stay on the Android device. No GPS or Accessibility permissions are requested. Projectivy can remain as backup launcher.</p></div>
   </section>

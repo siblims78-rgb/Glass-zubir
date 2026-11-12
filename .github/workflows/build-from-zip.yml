@@ -39,6 +39,29 @@ jobs:
               assert 5000<p.stat().st_size<1800000, "Unexpected size "+str(p)
               print("Verified", filename, p.stat().st_size, "bytes")
           PY
+      - name: Validate TV and Companion JavaScript
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import re, pathlib, tempfile, subprocess
+          paths = ["app/src/main/assets/index.html", "app/src/main/assets/companion.html"]
+          for path in paths:
+              html = pathlib.Path(path).read_text(encoding="utf-8")
+              scripts = re.findall(r'<script\b([^>]*)>(.*?)</script\s*>', html, re.I|re.S)
+              assert scripts, f"No script blocks in {path}"
+              count = 0
+              for attrs,source in scripts:
+                  if re.search(r'\bsrc\s*=', attrs, re.I) or not source.strip():
+                      continue
+                  with tempfile.NamedTemporaryFile(suffix=".js",mode="w",delete=False,encoding="utf-8") as f:
+                      f.write(source)
+                      name=f.name
+                  subprocess.run(["node","--check",name],check=True)
+                  pathlib.Path(name).unlink()
+                  count += 1
+              assert count, f"No inline JavaScript validated in {path}"
+              print(f"Validated {count} scripts in {path}")
+          PY
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
