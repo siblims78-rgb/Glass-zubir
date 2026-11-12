@@ -25,6 +25,20 @@ jobs:
           test -f app/build.gradle
           test -f app/src/main/java/com/glassonn/home/MainActivity.java
           echo "Building directly from tracked Android source (no ZIP extraction)."
+      - name: Verify bundled Zen audio
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path("app/src/main/assets/nature")
+          for filename in ["zen_clear.ogg", "zen_cloud.ogg", "zen_rain.ogg", "zen_storm.ogg"]:
+              p=root/filename
+              assert p.is_file(), "Missing "+str(p)
+              with p.open("rb") as handle:
+                  assert handle.read(4)==b"OggS", "Invalid OGG "+str(p)
+              assert 5000<p.stat().st_size<1800000, "Unexpected size "+str(p)
+              print("Verified", filename, p.stat().st_size, "bytes")
+          PY
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
