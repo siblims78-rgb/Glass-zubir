@@ -1,0 +1,63 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.glassonn.home'
+    compileSdk 34
+    defaultConfig {
+        applicationId 'com.glassonn.home.v065'
+        minSdk 26
+        targetSdk 34
+        versionCode 21
+        versionName '0.6.5'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+// Bundle the original, unmodified field recordings at build time.
+// Fail the build if unavailable: never advertise a working audio feature with silent/missing assets.
+// Wikimedia Commons: all four original recordings public domain (see AUDIO_LICENSES_065.md).
+tasks.register('bundleZenNature') {
+    doLast {
+        // Commons originals: use verified public domain recordings. No synthesized bird/robot noises.
+        def recordings = [
+            'zen_clear.ogg': 'https://upload.wikimedia.org/wikipedia/commons/8/80/Birds_singing_in_garden.ogg',
+            'zen_cloud.ogg': 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Gentle_breeze_and_birds_singing.ogg',
+            'zen_rain.ogg': 'https://upload.wikimedia.org/wikipedia/commons/3/3d/Rain.ogg',
+            'zen_storm.ogg': 'https://upload.wikimedia.org/wikipedia/commons/4/42/Rain_and_thunder.ogg'
+        ]
+        def folder = file('src/main/assets/nature'); folder.mkdirs()
+        recordings.each { name, location ->
+            def dest = new File(folder, name)
+            if(dest.exists() && dest.length() > 5000) return
+            Exception last = null
+            for(int i=0;i<3;i++){
+                def temp = new File(folder, name+'.part')
+                java.net.HttpURLConnection con = null
+                try {
+                    con = (java.net.HttpURLConnection)new java.net.URL(location).openConnection()
+                    con.setConnectTimeout(20000); con.setReadTimeout(25000)
+                    con.setRequestProperty('User-Agent','GlassONN-AndroidTV/0.6.5 (nature ambience; Wikimedia Commons attribution included)')
+                    if(con.getResponseCode() != 200)throw new IOException('HTTP '+con.getResponseCode())
+                    int count=0
+                    con.getInputStream().withCloseable { input ->
+                        temp.withOutputStream { out ->
+                            byte[] buf = new byte[8192]; int n
+                            while((n=input.read(buf))!=-1){ count+=n; if(count>1800000)throw new IOException('Audio too large'); out.write(buf,0,n) }
+                        }
+                    }
+                    if(temp.length()<5000)throw new IOException('Audio too small')
+                    temp.withInputStream{ inp -> byte[] magic = new byte[4];if(inp.read(magic)!=4||new String(magic,'US-ASCII')!='OggS')throw new IOException('Not OGG') }
+                    java.nio.file.Files.move(temp.toPath(),dest.toPath(),java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+                    last=null;break
+                }catch(Exception err){last=err;temp.delete();if(i<2)Thread.sleep(1000*(i+1))}
+                finally{if(con!=null)con.disconnect()}
+            }
+            if(last!=null)throw new org.gradle.api.GradleException('Failed to package '+name+': '+last.message,last)
+            println 'Bundled '+name+' ('+dest.length()+' bytes)'
+        }
+    }
+}
+tasks.named('preBuild') { dependsOn tasks.named('bundleZenNature') }
