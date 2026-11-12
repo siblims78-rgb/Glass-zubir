@@ -909,6 +909,122 @@ html[data-theme]:not([data-theme="glass"]) #appMenu button:focus-visible{
 html[data-theme]:not([data-theme="glass"]) #trending #browseSearch{
  background:var(--t-card)!important;color:var(--t-fg)!important;border:1px solid var(--t-line)!important}
 
+
+/* v0.6.8 Clean Cinematic — compact information, full artwork, one floating menu. */
+#ui>.header{position:fixed!important;top:1.1vh!important;left:clamp(28px,4vw,74px)!important;right:2.4vw!important;
+ width:auto!important;height:22px!important;min-height:0!important;z-index:3!important;pointer-events:none;
+ opacity:.50!important;transform:none!important}
+#ui>.header .brand{font-size:clamp(10px,.85vw,14px)!important;font-weight:500!important;letter-spacing:.16em!important}
+#ui>.header .brand span{font-size:inherit!important;color:inherit!important}
+#ui>.hero,#ui.layout-balanced>.hero,#ui.layout-movies>.hero,#ui.layout-apps>.hero,#ui.layout-compact>.hero{
+ top:4.8vh!important;left:clamp(27px,4vw,75px)!important;right:2.6vw!important;width:auto!important;
+ height:clamp(107px,15vh,164px)!important;min-height:100px!important;max-height:17vh!important;flex:none!important;
+ grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)!important;gap:clamp(11px,1.4vw,26px)!important}
+#ui .hero .clockpanel.combinedClockWeather{display:flex!important;flex-direction:row!important;
+ justify-content:space-between!important;align-items:center!important;gap:clamp(8px,1.7vw,30px)!important;
+ padding:clamp(8px,1vw,18px) clamp(12px,2vw,30px)!important;border-radius:16px!important;min-width:0}
+#ui .clockpanel.combinedClockWeather>div:first-child{flex:1 1 auto!important;min-width:0}
+#ui .clockpanel.combinedClockWeather .time{font-size:var(--clock-size,clamp(52px,5vw,94px))!important;
+ line-height:1!important;font-weight:300!important;white-space:nowrap!important}
+#ui .clockpanel.combinedClockWeather .date{font-size:clamp(10px,.9vw,16px)!important;
+ line-height:1.2!important;margin-top:5px}
+#ui .clockpanel.combinedClockWeather .weatherrow{display:flex!important;flex:0 1 42%!important;
+ align-items:center!important;justify-content:flex-end!important;gap:clamp(8px,.8vw,19px)!important;
+ min-width:0!important;padding:0!important;border:0!important}
+#ui .clockpanel.combinedClockWeather .weatherrow .eyebrow{display:none!important}
+#ui .clockpanel.combinedClockWeather .weatherrow .temp{font-size:clamp(24px,2.4vw,44px)!important;
+ font-weight:500!important;white-space:nowrap}
+#ui .clockpanel.combinedClockWeather .weatherrow>div:last-child{display:flex;flex-direction:column;
+ align-items:center;justify-content:center;min-width:74px}
+#ui .clockpanel.combinedClockWeather #weatherIcon{font-size:clamp(24px,2.9vw,47px)!important;line-height:1!important}
+#ui .clockpanel.combinedClockWeather #weatherLabel{font-size:clamp(10px,.8vw,14px)!important;
+ white-space:nowrap;max-width:130px;overflow:hidden;text-overflow:ellipsis}
+#ui .clockpanel.combinedClockWeather .fxTestRow{display:none!important}
+#ui .hero .rightpanel{border-radius:16px!important;padding:clamp(8px,1vw,17px)!important}
+#ui .hero .rightpanel .prayers{gap:2px 8px!important}
+#ui #homeShelfViewport{left:clamp(27px,4vw,75px)!important;top:66.6667vh!important}
+#ui #homeShelfStack{padding-left:0!important}
+#ui>.footer,#homeScrollCue{display:none!important}
+#cinemaRail,#cinemaRail.expanded{position:fixed!important;z-index:60!important;
+ left:clamp(11px,1.25vw,22px)!important;bottom:clamp(20px,5vh,54px)!important;top:auto!important;
+ width:auto!important;height:auto!important;min-width:0!important;max-height:none!important;
+ padding:0!important;display:flex!important;flex-direction:column-reverse!important;align-items:flex-start!important;gap:9px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#cinemaRail #railToggle{display:grid!important;place-items:center!important;
+ width:clamp(47px,3.8vw,63px)!important;height:clamp(47px,3.8vw,63px)!important;border-radius:50%!important;
+ background:rgba(11,17,25,.22)!important;color:#fff!important;border:1px solid rgba(242,247,255,.28)!important;
+ font:normal clamp(24px,2.4vw,36px) system-ui!important;cursor:pointer;outline:none;
+ box-shadow:0 5px 19px #0002!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#cinemaRail #railToggle:focus-visible,#cinemaRail #railToggle:focus{
+ outline:2px solid #f6f9ff!important;outline-offset:3px!important;background:rgba(23,34,50,.5)!important}
+#cinemaRail #railActions{width:clamp(150px,12.5vw,195px)!important;display:flex!important;flex-direction:column!important;
+ gap:5px!important;padding:9px!important;border-radius:16px!important;
+ background:rgba(17,22,32,.97)!important;border:1px solid #ffffff2b!important;box-shadow:0 12px 42px #0007!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#cinemaRail #railActions[hidden]{display:none!important}
+#cinemaRail #railActions .railBtn{width:100%!important;height:clamp(43px,4.5vh,57px)!important;
+ display:flex!important;flex:none!important;align-items:center!important;justify-content:flex-start!important;
+ gap:12px!important;padding:6px 13px!important;border-radius:11px!important;
+ background:transparent!important;color:#f6f8fe!important;border:0!important;box-shadow:none!important;transform:none!important}
+#cinemaRail #railActions .railBtn span{font-size:clamp(23px,2.1vw,33px)!important;min-width:30px}
+#cinemaRail #railActions .railBtn small{font-size:clamp(13px,1vw,16px)!important;font-weight:500}
+#cinemaRail #railActions .railBtn:focus{
+ outline:2px solid #e8f2ff!important;background:#4b586bcc!important;
+ border:0!important;box-shadow:none!important;transform:none!important}
+html[data-theme]:not([data-theme="glass"]) #cinemaRail,
+html[data-theme]:not([data-theme="glass"]) #cinemaRail.expanded{
+ background:transparent!important;border:0!important;box-shadow:none!important}
+html[data-theme]:not([data-theme="glass"]) #cinemaRail #railActions{
+ background:var(--t-panel,#232a32)!important;border:1px solid var(--t-line,#65707f)!important}
+html[data-theme]:not([data-theme="glass"]) #cinemaRail #railActions .railBtn{
+ background:transparent!important;color:var(--t-fg,#fff)!important}
+html[data-theme]:not([data-theme="glass"]) #cinemaRail #railActions .railBtn:focus{
+ background:var(--t-card,#35404b)!important;outline:2px solid var(--t-focus,#fff)!important}
+#ui .hero .clockpanel,#ui .hero .rightpanel{
+ background:var(--home-panel-bg,rgba(12,22,36,.5))!important;
+ border-color:var(--home-panel-stroke,rgba(220,240,255,.2))!important;
+ box-shadow:var(--home-panel-shadow,none)!important;
+ backdrop-filter:var(--home-panel-blur,none)!important;-webkit-backdrop-filter:var(--home-panel-blur,none)!important}
+#ui #homeShelfStack .homeTrendCard,#ui #homeShelfStack .traktCard,#ui .appMedia,
+#ui .app:focus .appMedia{
+ background:var(--home-card-bg,rgba(12,22,36,.5))!important;
+ border-color:var(--home-panel-stroke,rgba(220,240,255,.2))!important;
+ box-shadow:var(--home-panel-shadow,none)!important}
+#ui #homeShelfStack .homeTrendCard .homeTrendMeta{
+ background:var(--home-card-bg,rgba(12,22,36,.5))!important}
+html[data-theme]:not([data-theme="glass"]) #ui .hero .clockpanel,
+html[data-theme]:not([data-theme="glass"]) #ui .hero .rightpanel,
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .homeTrendCard,
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .traktCard,
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .homeTrendCard .homeTrendMeta,
+html[data-theme]:not([data-theme="glass"]) #ui .appMedia,
+html[data-theme]:not([data-theme="glass"]) #ui .app:focus .appMedia{
+ background:var(--home-panel-bg,transparent)!important;
+ border-color:var(--home-panel-stroke,transparent)!important;
+ box-shadow:var(--home-panel-shadow,none)!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .homeTrendCard,
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .traktCard,
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .homeTrendCard .homeTrendMeta,
+html[data-theme]:not([data-theme="glass"]) #ui .appMedia{
+ background:var(--home-card-bg,transparent)!important}
+html[data-theme] #ui #homeShelfStack .homeTrendMeta strong,
+html[data-theme] #ui #homeShelfStack .homeTrendMeta span{
+ color:var(--home-meta-ink,#fff)!important}
+html[data-panels-transparent="true"] #ui .hero .clockpanel *,
+html[data-panels-transparent="true"] #ui .hero .rightpanel *,
+html[data-panels-transparent="true"] #ui #homeShelfStack .traktTitle,
+html[data-panels-transparent="true"] #ui #homeShelfStack .traktMeta,
+html[data-panels-transparent="true"] #ui #homeShelfStack .homeTrendMeta *{
+ color:#fff!important;text-shadow:0 2px 8px #000!important}
+@media(max-height:630px){
+ #ui>.hero{height:clamp(105px,17vh,155px)!important;max-height:18vh!important}
+ #ui .clockpanel.combinedClockWeather .time{font-size:clamp(40px,4.2vw,72px)!important}
+ #ui .clockpanel.combinedClockWeather .weatherrow .temp{font-size:clamp(22px,2.2vw,39px)!important}
+}
+@media(prefers-reduced-motion:reduce){#cinemaRail #railToggle,#cinemaRail #railActions{transition:none!important}}
+
 </style></head><body>
 <div class="wallpaper" id="w1"></div><div class="wallpaper" id="w2" style="opacity:0"></div><div class="wallpaper" id="w3" style="opacity:0"></div><div class="wallpaper" id="w4" style="opacity:0"></div><div class="wallpaper" id="customImage" style="opacity:0"></div><div class="wallpaper" id="onlineWallpaper" style="opacity:0"></div><div class="wallpaper" id="focusBackdrop" aria-hidden="true"></div><div id="shade"></div>
 <nav id="cinemaRail" aria-label="Quick navigation menu">
