@@ -305,7 +305,7 @@ public class MainActivity extends Activity {
     byte[] userWallpaperThumbnail(String id)throws Exception{return userWallpapers.thumbnail(id);}
     int getGlassOpacity(){return prefs().getInt("glass_opacity",50);}
     int getGlassBlur(){return prefs().getInt("glass_blur",0);}
-    void setGlassOpacity(int value){if(value<8||value>60)return;prefs().edit().putInt("glass_opacity",value).apply();remoteUpdated();}
+    void setGlassOpacity(int value){if(value<0||value>100)return;prefs().edit().putInt("glass_opacity",value).apply();remoteUpdated();}
     void setGlassBlur(int value){if(value<0||value>18)return;prefs().edit().putInt("glass_blur",value).apply();remoteUpdated();}
     String getLayoutMode(){return prefs().getString("layout_mode","balanced");}
     void setLayoutMode(String mode){

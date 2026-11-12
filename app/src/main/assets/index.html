@@ -955,7 +955,7 @@ html[data-theme]:not([data-theme="glass"]) #trending #browseSearch{
     <div class="settingsGroup"><h3>TV Theme</h3><p class="settingsHint">Pick a palette: Pastel, Grey, Dark, Colourful, Glass or Bright. Use your remote to switch instantly.</p><div class="themePicker" id="themePicker"></div></div>
     <div class="settingsGroup"><h3 data-en="Clock Style" data-ms="Gaya Jam">Clock Style</h3><p class="settingsHint" data-en="Personalise the clock font, size, colour and effect." data-ms="Pilih font, saiz, warna dan efek jam.">Personalise the clock font, size, colour and effect.</p><div class="clockStyleSection" id="clockStyleSection"><div id="clockStyleEditor"></div></div></div>
     <div class="settingsGroup"><h3 data-en="Wallpaper" data-ms="Wallpaper">Wallpaper</h3><div class="gallery" id="wallpaperGallery"></div><h4 data-en="Wallpaper Source" data-ms="Sumber Wallpaper">Wallpaper Source</h4><div class="places settingsOptionGrid" id="sourceButtons"></div><p class="hint">Gambar sendiri: buka Companion di telefon, pilih gambar dan Fixed / Shuffle. Semua fail disimpan dalam cache TV sahaja.</p></div>
-    <div class="settingsGroup"><h3 data-en="Glass Panels" data-ms="Panel Kaca">Glass Panels</h3><div class="glassControls"><label>Opacity <strong id="glassOpacityValue">50%</strong><input tabindex="0" type="range" id="glassOpacityRange" min="8" max="60" step="2" value="50" oninput="setGlassOpacity(this.value)"><span class="rangeButtons"><button class="stepButton" onclick="adjustGlass('opacity',-2)">−</button><button class="stepButton" onclick="adjustGlass('opacity',2)">+</button></span></label><label>Blur <strong id="glassBlurValue">0px</strong><input tabindex="0" type="range" id="glassBlurRange" min="0" max="18" step="1" value="0" oninput="setGlassBlur(this.value)"><span class="rangeButtons"><button class="stepButton" onclick="adjustGlass('blur',-1)">−</button><button class="stepButton" onclick="adjustGlass('blur',1)">+</button></span></label></div></div>
+    <div class="settingsGroup"><h3 data-en="Home Panel Opacity" data-ms="Kelegapan Panel Home">Home Panel Opacity</h3><p class="settingsHint">0% means fully transparent Home panels, 100% fully opaque. Blur applies to Glass only.</p><div class="glassControls"><label>Home panel opacity <strong id="glassOpacityValue">50%</strong><input tabindex="0" type="range" id="glassOpacityRange" min="0" max="100" step="1" value="50" oninput="setGlassOpacity(this.value)"><span class="rangeButtons"><button class="stepButton" onclick="adjustGlass('opacity',-2)">−</button><button class="stepButton" onclick="adjustGlass('opacity',2)">+</button></span></label><label>Blur <strong id="glassBlurValue">0px</strong><input tabindex="0" type="range" id="glassBlurRange" min="0" max="18" step="1" value="0" oninput="setGlassBlur(this.value)"><span class="rangeButtons"><button class="stepButton" onclick="adjustGlass('blur',-1)">−</button><button class="stepButton" onclick="adjustGlass('blur',1)">+</button></span></label></div></div>
   </section>
   <section class="settingsPage" data-settings-page="home">
     <div class="settingsGroup"><h3 data-en="Visible Home Sections" data-ms="Bahagian Dipaparkan">Visible Home Sections</h3><p class="settingsHint" data-en="Choose what appears on your Home screen." data-ms="Pilih apa yang dipaparkan pada skrin utama.">Choose what appears on your Home screen.</p><div class="cardOptions" id="cardButtons"></div></div>
@@ -1114,6 +1114,7 @@ function applyClockStyle(){
 
 function applyTheme(){
  document.documentElement.dataset.theme=['pastel','grey','dark','colourful','glass','bright'].includes(theme)?theme:'glass';
+ applyGlass();
 }
 function buildThemePicker(){const area=$('themePicker');if(!area)return;area.replaceChildren();
  for(const [key,label] of [['pastel','Pastel'],['grey','Grey'],['dark','Dark'],['colourful','Colourful'],['glass','Glass'],['bright','Bright']]){
@@ -1531,18 +1532,34 @@ function buildCardOptions(){
   el.appendChild(b);
  }
 }
+const HOME_PALETTE={
+ glass:{panel:[10,22,40],card:[14,26,42],stroke:[220,241,252],ink:'#fff'},
+ pastel:{panel:[246,248,241],card:[228,238,233],stroke:[104,142,139],ink:'#28464a'},
+ grey:{panel:[46,55,63],card:[54,64,72],stroke:[179,193,203],ink:'#f5f7fa'},
+ dark:{panel:[10,13,18],card:[22,27,33],stroke:[148,165,180],ink:'#f5f7fa'},
+ colourful:{panel:[48,36,76],card:[62,46,92],stroke:[194,165,236],ink:'#faf8ff'},
+ bright:{panel:[246,251,254],card:[220,239,247],stroke:[108,163,189],ink:'#284755'}
+};
+function panelRGBA(rgb,a){return 'rgba('+rgb.join(',')+','+Math.max(0,Math.min(1,a)).toFixed(3)+')';}
 function applyGlass(){
- const opacity=Math.max(8,Math.min(60,Math.round(glassOpacity)));const blur=Math.max(0,Math.min(18,Math.round(glassBlur)));
- document.documentElement.style.setProperty('--glass-alpha',String(opacity/100));
- document.documentElement.style.setProperty('--glass-blur',blur+'px');
+ const opacity=Math.max(0,Math.min(100,Math.round(glassOpacity)));const blur=Math.max(0,Math.min(18,Math.round(glassBlur)));
+ const alpha=opacity/100,colors=HOME_PALETTE[theme]||HOME_PALETTE.glass,root=document.documentElement;
+ root.style.setProperty('--glass-alpha',String(alpha));root.style.setProperty('--glass-blur',blur+'px');
+ root.style.setProperty('--home-panel-bg',panelRGBA(colors.panel,alpha));
+ root.style.setProperty('--home-card-bg',panelRGBA(colors.card,alpha));
+ root.style.setProperty('--home-panel-stroke',panelRGBA(colors.stroke,alpha*.3));
+ root.style.setProperty('--home-panel-shadow',alpha===0?'none':'0 6px 22px rgba(0,0,0,'+(alpha*.18).toFixed(3)+')');
+ root.style.setProperty('--home-panel-blur',theme==='glass'&&opacity>0?'blur('+blur+'px)':'none');
+ root.style.setProperty('--home-meta-ink',alpha<.35?'#fff':colors.ink);
+ root.dataset.panelsTransparent=alpha<.35?'true':'false';
  if($('glassOpacityRange'))$('glassOpacityRange').value=opacity;
- if($('glassBlurRange'))$('glassBlurRange').value=blur;
+ if($('glassBlurRange')){$('glassBlurRange').value=blur;$('glassBlurRange').disabled=theme!=='glass';}
  if($('glassOpacityValue'))$('glassOpacityValue').textContent=opacity+'%';
  if($('glassBlurValue'))$('glassBlurValue').textContent=blur+'px';
 }
-window.setGlassOpacity=function(value){glassOpacity=Number(value);if(!Number.isFinite(glassOpacity))glassOpacity=50;applyGlass();if(bridge())Native.setGlassOpacity(Math.round(glassOpacity));};
+window.setGlassOpacity=function(value){glassOpacity=Number(value);if(!Number.isFinite(glassOpacity))glassOpacity=50;glassOpacity=Math.max(0,Math.min(100,glassOpacity));applyGlass();if(bridge())Native.setGlassOpacity(Math.round(glassOpacity));};
 window.setGlassBlur=function(value){glassBlur=Number(value);applyGlass();if(bridge())Native.setGlassBlur(Math.round(glassBlur));};
-window.adjustGlass=function(type,delta){if(type==='opacity')setGlassOpacity(Math.max(8,Math.min(60,glassOpacity+delta)));else setGlassBlur(Math.max(0,Math.min(18,glassBlur+delta)));};
+window.adjustGlass=function(type,delta){if(type==='opacity')setGlassOpacity(Math.max(0,Math.min(100,glassOpacity+delta)));else setGlassBlur(Math.max(0,Math.min(18,glassBlur+delta)));};
 const SETTINGS_PAGES={
  appearance:{en:['Appearance','Choose the look and feel of your launcher.'],ms:['Penampilan','Pilih rupa dan gaya launcher anda.']},
  home:{en:['Home Screen','Control the sections and layout of Home.'],ms:['Skrin Utama','Kawal bahagian dan susun atur Home.']},

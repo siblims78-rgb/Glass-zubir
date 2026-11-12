@@ -190,7 +190,7 @@ final class CompanionServer {
                 case "theme":if(v.matches("pastel|grey|dark|colourful|glass|bright"))owner.setTheme(v);else ok=false;break;
                 case "fx":owner.setWeatherFx("true".equals(v));break;
                 case "soundFx":owner.setSoundFx("true".equals(v));break;
-                case "glassOpacity":try{int o=Integer.parseInt(v);if(o>=8&&o<=60)owner.setGlassOpacity(o);else ok=false;}catch(Exception ex){ok=false;}break;
+                case "glassOpacity":try{int o=Integer.parseInt(v);if(o>=0&&o<=100)owner.setGlassOpacity(o);else ok=false;}catch(Exception ex){ok=false;}break;
                 case "glassBlur":try{int b=Integer.parseInt(v);if(b>=0&&b<=18)owner.setGlassBlur(b);else ok=false;}catch(Exception ex){ok=false;}break;
                 case "favorite":ok=owner.setFavorite(input.optString("pkg"),"true".equals(v));break;
                 case "card":ok=owner.setCardVisible(input.optString("pkg"),"true".equals(v));break;
