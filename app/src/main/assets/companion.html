@@ -33,6 +33,28 @@ html[data-tv-theme] input[type=range]{accent-color:var(--accent)}
 html[data-tv-theme="pastel"] .tvstage{background:#deece7;color:#264948}
 html[data-tv-theme="colourful"] .tvstage{background:linear-gradient(125deg,#28295e,#4c2d65)}
 
+
+/* Solid TV palettes for Companion, not leftover teal glass surfaces. */
+html[data-tv-theme]:not([data-tv-theme="glass"]) .nav{
+ background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html[data-tv-theme]:not([data-tv-theme="glass"]) .brandicon,
+html[data-tv-theme]:not([data-tv-theme="glass"]) .panel,
+html[data-tv-theme]:not([data-tv-theme="glass"]) .appitem,
+html[data-tv-theme]:not([data-tv-theme="glass"]) .photo,
+html[data-tv-theme]:not([data-tv-theme="glass"]) .tvstage,
+html[data-tv-theme]:not([data-tv-theme="glass"]) .upload{
+ background:var(--surface)!important;color:var(--ink)!important;
+ border-color:var(--line)!important;box-shadow:none!important}
+html[data-tv-theme]:not([data-tv-theme="glass"]) .widgetblock,
+html[data-tv-theme]:not([data-tv-theme="glass"]) .resizer,
+html[data-tv-theme]:not([data-tv-theme="glass"]) .switch.on,
+html[data-tv-theme]:not([data-tv-theme="glass"]) .pill,
+html[data-tv-theme]:not([data-tv-theme="glass"]) .tileSelect button.active{
+ background:var(--surface2)!important;color:var(--ink)!important;border-color:var(--accent)!important}
+html[data-tv-theme]:not([data-tv-theme="glass"]) .btn.primary,
+html[data-tv-theme]:not([data-tv-theme="glass"]) .nav .tab.active{
+ background:var(--accent)!important;color:var(--accentInk)!important}
+
 </style></head><body><main>
 <header class="top"><div class="eyebrow">TV PERSONALISATION</div><div class="brandline"><div class="brandicon">◇</div><div class="brand">Glass ONN <div style="color:var(--muted);font-size:11px;font-weight:400;letter-spacing:0;margin-top:4px">Companion · v0.6.5</div></div><div class="signal" id="signal"><span class="dot"></span><span id="signalText">Not paired</span></div></div><p class="lede">A simple way to make your TV feel like home.</p></header>
 <section class="panel" id="pairing"><h2>Connect your TV</h2><p class="sub">Open Glass ONN → Settings → Integrations → Companion. Scan the QR and enter the PIN shown on TV.</p><label class="label" for="pin">6-digit pairing PIN</label><input class="field" id="pin" type="text" maxlength="6" inputmode="numeric" autocomplete="one-time-code" placeholder="••••••"><button class="btn primary" id="pairBtn" style="width:100%;margin-top:12px">Pair this phone</button><p id="pairError" class="status alert"></p></section>

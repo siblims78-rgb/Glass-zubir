@@ -707,6 +707,147 @@ html[data-theme="colourful"] #settings .settingsNavItem.active,html[data-theme="
 @media(max-width:950px){.themePicker{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(prefers-reduced-motion:reduce){html[data-theme] #focusBackdrop{transition:none!important}}
 
+
+/* v0.6.7 Cinema-first Home: 2/3 artwork + 1/3 independently scrollable shelves. */
+#ui{height:100vh!important;max-height:100vh!important;overflow:hidden!important;padding-bottom:0!important}
+#ui>.header{position:fixed!important;top:1.2vh;left:clamp(73px,6.9vw,123px);right:2.2vw;z-index:3;
+  width:auto;flex:none!important;transition:opacity .25s ease,transform .25s ease}
+#ui>.hero,#ui.layout-balanced>.hero,#ui.layout-movies>.hero,#ui.layout-apps>.hero,#ui.layout-compact>.hero{
+  position:fixed!important;top:6vh;left:clamp(73px,6.9vw,123px);right:2.2vw;z-index:2;
+  width:auto;height:clamp(118px,16vh,194px)!important;min-height:0!important;max-height:16vh!important;
+  flex:none!important;transition:opacity .3s ease,transform .3s ease}
+#ui .hero .clockpanel .time{font-size:clamp(45px,5vw,90px)!important}
+#ui.shelves-scrolled>.header,#ui.shelves-scrolled>.hero{opacity:0;transform:translateY(-24px);pointer-events:none}
+#ui #homeShelfViewport{position:fixed;top:66.6667vh;bottom:0;left:clamp(73px,6.9vw,123px);right:0;
+  height:33.3333vh;z-index:4;overflow-x:hidden;overflow-y:auto!important;overscroll-behavior:contain;
+  scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:#9fa8ad77 transparent;
+  background:transparent!important;scroll-padding-top:4px;mask-image:linear-gradient(to bottom,transparent,#000 3%,#000)}
+#ui #homeShelfStack{display:flex!important;flex-direction:column!important;gap:clamp(12px,1.6vh,22px);
+  padding:5px 2.2vw 5vh 3px;width:100%;min-height:100%;box-sizing:border-box}
+#ui #homeShelfStack>.apps{order:3;width:100%;flex:0 0 auto!important;
+  height:clamp(120px,23vh,230px)!important;min-height:120px!important;max-height:none!important;scroll-snap-align:start}
+#ui #homeShelfStack>.trendingHome{order:2;display:flex!important;flex:0 0 auto!important;flex-direction:column;
+  gap:clamp(12px,1.6vh,22px)!important;min-height:0!important;max-height:none!important;height:auto!important;
+  overflow:visible!important;width:100%;scroll-snap-align:start}
+#ui.apps-first #homeShelfStack>.apps{order:2}
+#ui.apps-first #homeShelfStack>.trendingHome{order:3}
+#ui.hideTrending #homeShelfStack>.trendingHome{display:none!important}
+#ui.hideFavorites #homeShelfStack>.apps{display:none!important}
+#ui #homeShelfStack .trendShelf,#ui.layout-balanced #homeShelfStack .trendShelf,
+#ui.layout-movies #homeShelfStack .trendShelf,#ui.layout-apps #homeShelfStack .trendShelf,
+#ui.layout-compact #homeShelfStack .trendShelf{
+  height:clamp(178px,33vh,380px)!important;min-height:178px!important;max-height:none!important;
+  flex:0 0 auto!important;scroll-snap-align:start}
+#ui #homeShelfStack .traktHome,#ui #homeShelfStack .recentHome:not([hidden]){scroll-snap-align:start}
+#ui #homeShelfStack .homeTrendCard{display:flex!important;flex-direction:column!important;gap:0!important;padding:0!important}
+#ui #homeShelfStack .homeTrendCard .homeTrendArtwork,#ui #homeShelfStack .homeTrendCard .homeTrendArtwork.landscape{
+  position:relative!important;inset:auto!important;display:block!important;width:100%!important;
+  max-width:100%!important;height:73%!important;flex:0 0 73%!important;border-radius:11px 11px 0 0!important}
+#ui #homeShelfStack .homeTrendCard .homeTrendArtwork img{width:100%!important;height:100%!important}
+#ui #homeShelfStack .homeTrendCard .homeTrendArtwork.landscape img{object-fit:cover!important}
+#ui #homeShelfStack .homeTrendCard .homeTrendMeta{position:relative!important;inset:auto!important;
+  flex:1 1 auto!important;display:flex!important;flex-direction:column!important;justify-content:center!important;
+  min-height:0!important;padding:5px 11px!important;gap:2px!important;
+  background:var(--shelf-card,#172131)!important}
+#ui #homeShelfStack .homeTrendMeta strong{font-size:clamp(12px,1.09vw,18px)!important;
+  line-height:1.15!important;text-shadow:none!important;overflow:hidden;white-space:nowrap;display:block!important}
+#ui #homeShelfStack .homeTrendMeta span{font-size:clamp(9px,.74vw,13px)!important;
+  overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#ui #homeShelfStack .traktCard{background:var(--shelf-card,#172131)!important}
+#ui #homeShelfStack .homeTrendHeader{font-weight:600;text-shadow:0 2px 8px #000b}
+#ui>.footer{display:none!important}
+#homeScrollCue{position:fixed;z-index:2;top:62.7vh;left:52%;pointer-events:none;
+ background:rgba(7,10,15,.7);color:#f5f6fa;border-radius:20px;padding:5px 12px;font-size:12px;
+ letter-spacing:.1em;transition:opacity .24s ease}
+#ui.shelves-scrolled #homeScrollCue{opacity:0}
+#focusBackdrop{inset:0 0 auto 0!important;height:66.6667vh!important;max-height:66.6667vh!important;
+  background-position:center 37%!important;transform:none!important;
+  mask-image:linear-gradient(to bottom,#000 0%,#000 75%,transparent 100%)}
+#shade{background:linear-gradient(to top,#000 0%,#000e 18%,#000b 34%,#0003 55%,#0000 79%)!important}
+#cinemaRail{z-index:7!important}
+html[data-theme="glass"]{--shelf-card:#172131}
+html[data-theme="pastel"]{--t-bg:#eff3ef;--t-panel:#f6f7f2;--t-card:#e7efeb;--t-fg:#284149;--t-muted:#597378;--t-line:#b9d0cc;--t-focus:#4e8388;--shelf-card:#e7efeb}
+html[data-theme="grey"]{--t-bg:#22282e;--t-panel:#30383f;--t-card:#364047;--t-fg:#f3f5f5;--t-muted:#bdcbd0;--t-line:#59646b;--t-focus:#d4e1e4;--shelf-card:#303840}
+html[data-theme="dark"]{--t-bg:#090b0e;--t-panel:#12171b;--t-card:#1b2228;--t-fg:#f5f6f8;--t-muted:#b1bbc2;--t-line:#343e47;--t-focus:#f1f3f4;--shelf-card:#161d23}
+html[data-theme="colourful"]{--t-bg:#1a1732;--t-panel:#30294d;--t-card:#40335b;--t-fg:#faf7ff;--t-muted:#d1c3e2;--t-line:#7969a1;--t-focus:#ffe6a4;--shelf-card:#352a50}
+html[data-theme="bright"]{--t-bg:#e0f4fa;--t-panel:#f6fcff;--t-card:#dcecf4;--t-fg:#204858;--t-muted:#487287;--t-line:#a6cbdc;--t-focus:#467e9b;--shelf-card:#deedf4}
+/* This overrides legacy #ui.cinema-dark and .glass !important styles. */
+html[data-theme]:not([data-theme="glass"]) #ui .glass,
+html[data-theme]:not([data-theme="glass"]) #ui.cinema-dark .glass,
+html[data-theme]:not([data-theme="glass"]) #ui .hero .clockpanel,
+html[data-theme]:not([data-theme="glass"]) #ui .hero .rightpanel,
+html[data-theme]:not([data-theme="glass"]) #ui .weatherWidget{
+ background:var(--t-panel)!important;color:var(--t-fg)!important;
+ border:1px solid var(--t-line)!important;box-shadow:0 6px 20px #0002!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html[data-theme]:not([data-theme="glass"]) #ui .hero *{color:var(--t-fg)!important;text-shadow:none!important}
+html[data-theme]:not([data-theme="glass"]) #ui .hero .subtle{color:var(--t-muted)!important}
+html[data-theme]:not([data-theme="glass"]) #cinemaRail{
+ background:var(--t-panel)!important;border-color:var(--t-line)!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important}
+html[data-theme]:not([data-theme="glass"]) #cinemaRail .railBtn{
+ color:var(--t-fg)!important;background:transparent!important;box-shadow:none!important}
+html[data-theme]:not([data-theme="glass"]) #cinemaRail .railBtn:focus,
+html[data-theme]:not([data-theme="glass"]) #cinemaRail .railBtn.selected{
+ background:var(--t-card)!important;outline:2px solid var(--t-focus)!important;
+ box-shadow:none!important}
+html[data-theme]:not([data-theme="glass"]) #ui .header-right .button,
+html[data-theme]:not([data-theme="glass"]) #ui .header-right .chip{
+ background:var(--t-panel)!important;color:var(--t-fg)!important;
+ border:1px solid var(--t-line)!important;box-shadow:none!important;backdrop-filter:none!important}
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .homeTrendCard,
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .traktCard{
+ background:var(--t-card)!important;color:var(--t-fg)!important;border:1px solid var(--t-line)!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:0 5px 13px #0003!important}
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .homeTrendMeta,
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .traktMeta{color:var(--t-muted)!important}
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .homeTrendMeta *,
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .traktTitle{
+ color:var(--t-fg)!important;text-shadow:none!important}
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .homeTrendMeta span{color:var(--t-muted)!important}
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .homeTrendCard:focus,
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .traktCard:focus{
+ outline:2px solid var(--t-focus)!important;border-color:var(--t-focus)!important;
+ box-shadow:0 0 0 2px var(--t-focus)!important}
+html[data-theme]:not([data-theme="glass"]) #ui .appMedia,
+html[data-theme]:not([data-theme="glass"]) #ui .app:focus .appMedia{
+ background:var(--t-card)!important;border:1px solid var(--t-line)!important;box-shadow:0 5px 15px #0002!important}
+html[data-theme]:not([data-theme="glass"]) #ui .app:focus .appMedia{
+ border-color:var(--t-focus)!important;box-shadow:0 0 0 2px var(--t-focus)!important}
+html[data-theme]:not([data-theme="glass"]) #ui .app:focus .appMedia img{filter:none!important;transform:scale(1.04)!important}
+html[data-theme]:not([data-theme="glass"]) #ui .homeTrendHeader,
+html[data-theme]:not([data-theme="glass"]) #ui .appsheader{color:#fff!important;text-shadow:0 2px 8px #000d!important}
+html[data-theme]:not([data-theme="glass"]) #settings,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsShell,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsWorkspace,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsSidebar,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsTop{
+ background:var(--t-bg)!important;color:var(--t-fg)!important;border-color:var(--t-line)!important;
+ box-shadow:none!important;backdrop-filter:none!important}
+html[data-theme]:not([data-theme="glass"]) #settings .settingsGroup{
+ background:var(--t-panel)!important;color:var(--t-fg)!important;border:1px solid var(--t-line)!important;box-shadow:none!important}
+html[data-theme]:not([data-theme="glass"]) #settings h2,
+html[data-theme]:not([data-theme="glass"]) #settings h3,
+html[data-theme]:not([data-theme="glass"]) #settings h4,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsBrand{color:var(--t-fg)!important}
+html[data-theme]:not([data-theme="glass"]) #settings .settingsHint,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsSidebarFoot,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsTop p{color:var(--t-muted)!important}
+html[data-theme]:not([data-theme="glass"]) #settings .themeChoice,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsNavItem,
+html[data-theme]:not([data-theme="glass"]) #settings button:not(.settingsExit),
+html[data-theme]:not([data-theme="glass"]) #settings input,
+html[data-theme]:not([data-theme="glass"]) #settings select{
+ background:var(--t-card)!important;color:var(--t-fg)!important;
+ border:1px solid var(--t-line)!important;box-shadow:none!important;backdrop-filter:none!important}
+html[data-theme]:not([data-theme="glass"]) #settings .settingsNavItem.active,
+html[data-theme]:not([data-theme="glass"]) #settings .themeChoice.selected,
+html[data-theme]:not([data-theme="glass"]) #settings button:focus-visible{
+ border:2px solid var(--t-focus)!important;outline-color:var(--t-focus)!important;box-shadow:none!important}
+@media(max-height:670px){#ui>.hero{height:18vh!important;max-height:18vh!important}}
+@media(prefers-reduced-motion:reduce){#ui>.header,#ui>.hero,#homeScrollCue{transition:none!important}
+ #ui #homeShelfViewport{scroll-behavior:auto!important}}
+
 </style></head><body>
 <div class="wallpaper" id="w1"></div><div class="wallpaper" id="w2" style="opacity:0"></div><div class="wallpaper" id="w3" style="opacity:0"></div><div class="wallpaper" id="w4" style="opacity:0"></div><div class="wallpaper" id="customImage" style="opacity:0"></div><div class="wallpaper" id="onlineWallpaper" style="opacity:0"></div><div class="wallpaper" id="focusBackdrop" aria-hidden="true"></div><div id="shade"></div>
 <nav id="cinemaRail" aria-label="Navigasi Glass ONN">
@@ -929,7 +1070,7 @@ function buildClockOptions(){const area=$('clockStyleEditor');if(!area)return;ar
 }
 
 function init(){
- initCinematicUI();
+ initCinematicUI();initHomeShelfViewport();
  fromNative();applyTheme();applyClockStyle();try{recentPicks=JSON.parse(localStorage.getItem('glassonn_recent_picks')||'[]').slice(0,4);}catch(e){recentPicks=[];}try{nextPlayList=JSON.parse(localStorage.getItem('glassonn_nextplay')||'[]').slice(0,8);}catch(e){nextPlayList=[];}applyCards();applyGlass();applyLayout();applyWallpaperMode();updatePlaceUI();clockTick();setInterval(clockTick,1000);
  fetchApps();refreshAll();setInterval(refreshIfDue,60000);
  setInterval(nextScene,30000);setInterval(weatherFxTick,6000);refreshTrendingFeeds();
@@ -1027,6 +1168,56 @@ window.railHome=function(){
  for(const id of ['settings','allApps','trending','appMenu'])$(id)?.classList.remove('open');
  stopMovieBackdrop(true);$('railHome')?.focus();
 };
+
+function initHomeShelfViewport(){
+ const ui=$('ui'),trending=$('trendingHome'),apps=ui?.querySelector('.apps');
+ if(!ui||!trending||!apps||$('homeShelfViewport'))return;
+ const v=document.createElement('div');v.id='homeShelfViewport';
+ v.setAttribute('role','region');v.setAttribute('aria-label','Scrollable Apps, Continue Watching and Trending');
+ const stack=document.createElement('div');stack.id='homeShelfStack';v.appendChild(stack);
+ ui.insertBefore(v,ui.querySelector('.footer'));stack.append(trending,apps);
+ const hint=document.createElement('div');hint.id='homeScrollCue';hint.textContent='⌄  SCROLL TO EXPLORE';ui.appendChild(hint);
+ v.addEventListener('scroll',()=>ui.classList.toggle('shelves-scrolled',v.scrollTop>20),{passive:true});
+}
+function homeShelfRows(){
+ const v=$('homeShelfViewport');if(!v)return [];
+ return [...v.querySelectorAll('.apps,.traktHome,.recentHome,.trendShelf')]
+  .filter(row=>row.getClientRects().length>0&&getComputedStyle(row).display!=='none')
+  .sort((a,b)=>a.getBoundingClientRect().top-b.getBoundingClientRect().top);
+}
+function homeShelfItems(row){
+ const cards=[...row.querySelectorAll('.app,.homeTrendCard,.traktCard,.homeSetup')]
+  .filter(el=>el.getClientRects().length>0&&!el.disabled);
+ return cards.length?cards:[...row.querySelectorAll('.homeTrendMore')].filter(el=>el.getClientRects().length>0&&!el.disabled);
+}
+function revealHomeShelf(row){
+ const v=$('homeShelfViewport');if(!v||!row)return;
+ const y=row.getBoundingClientRect().top-v.getBoundingClientRect().top+v.scrollTop;
+ v.scrollTo({top:Math.max(0,y-3),behavior:'smooth'});
+}
+function navigateHomeShelf(key,current){
+ const v=$('homeShelfViewport');if(!v||!v.contains(current))return false;
+ const row=current.closest('.apps,.traktHome,.recentHome,.trendShelf');if(!row)return false;
+ const rows=homeShelfRows(),i=rows.indexOf(row);if(i<0)return false;
+ if(key==='ArrowUp'||key==='ArrowDown'){
+  const next=rows[i+(key==='ArrowUp'?-1:1)];
+  if(!next){if(key==='ArrowUp'){$('railHome')?.focus();v.scrollTo({top:0,behavior:'smooth'});}return true;}
+  const options=homeShelfItems(next);if(!options.length)return true;
+  const box=current.getBoundingClientRect(),x=(box.left+box.right)/2;
+  let closest=options[0],distance=Infinity;
+  for(const item of options){const r=item.getBoundingClientRect(),d=Math.abs((r.left+r.right)/2-x);if(d<distance){closest=item;distance=d;}}
+  closest.focus({preventScroll:true});revealHomeShelf(next);return true;
+ }
+ if(key==='ArrowLeft'||key==='ArrowRight'){
+  const options=homeShelfItems(row),index=options.indexOf(current),step=key==='ArrowRight'?1:-1;
+  if(index>=0&&options[index+step]){
+   const next=options[index+step];next.focus({preventScroll:true});next.scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'});return true;
+  }
+  if(key==='ArrowLeft'&&index<=0){$('railHome')?.focus();return true;}
+ }
+ return false;
+}
+
 function initCinematicUI(){
  const hero=document.querySelector('#ui .hero');
  const clock=hero?.querySelector('.clockpanel');
@@ -1168,7 +1359,7 @@ function showCinematicWallpaper(){
 let focusBackdropSerial=0,focusBackdropRestore=0;
 function validMovieImage(url){try{const u=new URL(String(url||''));return u.protocol==='https:'&&/^([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]{2,}$/i.test(u.hostname)&&u.href.length<900?u.href:'';}catch(e){return '';}}
 function focusMovieBackdrop(item){
- if(source==='user'){stopMovieBackdrop(true);return;}
+ // Movie focus temporarily overlays even a personal photo; it never changes the saved wallpaper.
  clearTimeout(focusBackdropRestore);
  if(!item)return;
  const full=validMovieImage(item.background),fallback=validMovieImage(item.poster),url=full||fallback;
@@ -1966,6 +2157,7 @@ function visibleFocusable(){
 }
 function moveFocus(key){
  if($('settings').classList.contains('open')){settingsMoveFocus(key);return;}
+ if(!$('trending').classList.contains('open')&&!$('allApps').classList.contains('open')&&!$('appMenu').classList.contains('open')&&navigateHomeShelf(key,document.activeElement))return;
  const nodes=visibleFocusable(),cur=document.activeElement;
  if($('trending').classList.contains('open')){
   if(cur?.classList?.contains('trendingCard')){
