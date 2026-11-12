@@ -1,0 +1,50 @@
+name: Vendor verified Zen nature audio
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/vendor-zen-audio.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  vendor:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: GlassONN-debug-apk
+          run-id: 43158521598
+          github-token: ${{ github.token }}
+          path: previous-apk
+      - name: Extract and pin verified public-domain recordings
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK=previous-apk/app-debug.apk
+          test -f "$APK"
+          mkdir -p app/src/main/assets/nature
+          for f in zen_clear.ogg zen_cloud.ogg zen_rain.ogg zen_storm.ogg; do
+            unzip -p "$APK" "assets/nature/$f" > "app/src/main/assets/nature/$f"
+            python3 - "$f" <<'PY'
+          import pathlib,sys
+          p=pathlib.Path("app/src/main/assets/nature")/sys.argv[1]
+          data=p.read_bytes()
+          assert data[:4]==b"OggS" and 5000<len(data)<1800000, f"Invalid OGG: {p}"
+          print(p.name,len(data))
+          PY
+          done
+          git add -f app/src/main/assets/nature/*.ogg
+          if git diff --cached --quiet; then
+            echo "Nature audio already tracked."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "build: track verified Zen nature audio, avoid Wikimedia rate limits"
+            git push origin HEAD:main
+          fi
