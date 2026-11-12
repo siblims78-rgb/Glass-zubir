@@ -875,6 +875,40 @@ html[data-theme]:not([data-theme="glass"]) #ui .weatherTest{
   border-color:var(--t-line)!important;box-shadow:none!important}
 html[data-theme]:not([data-theme="glass"]) #ui .traktProgress span{background:var(--t-focus)!important}
 html[data-theme]:not([data-theme="glass"]) #ui .app:focus .appname{color:#fff!important;text-shadow:0 2px 7px #000a!important}
+
+/* Theme-complete browsing and app dialogs. Glass is the only frosted preset. */
+html[data-theme]:not([data-theme="glass"]) .overlay,
+html[data-theme]:not([data-theme="glass"]) #trending,
+html[data-theme]:not([data-theme="glass"]) #allApps,
+html[data-theme]:not([data-theme="glass"]) #appMenu{
+ background:var(--t-bg)!important;color:var(--t-fg)!important}
+html[data-theme]:not([data-theme="glass"]) #trending .overlayModal,
+html[data-theme]:not([data-theme="glass"]) #allApps .overlayModal,
+html[data-theme]:not([data-theme="glass"]) #appMenu .modal{
+ background:var(--t-panel)!important;color:var(--t-fg)!important;
+ border:1px solid var(--t-line)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+ box-shadow:none!important}
+html[data-theme]:not([data-theme="glass"]) #trending .browseDetails,
+html[data-theme]:not([data-theme="glass"]) #trending .trendingCard,
+html[data-theme]:not([data-theme="glass"]) #allApps .allAppCard,
+html[data-theme]:not([data-theme="glass"]) #appMenu .button{
+ background:var(--t-card)!important;color:var(--t-fg)!important;
+ border:1px solid var(--t-line)!important;box-shadow:none!important;backdrop-filter:none!important}
+html[data-theme]:not([data-theme="glass"]) #trending .browseDetails *,
+html[data-theme]:not([data-theme="glass"]) #trending .trendingCard *,
+html[data-theme]:not([data-theme="glass"]) #allApps .allAppCard *{
+ color:var(--t-fg)!important;text-shadow:none!important}
+html[data-theme]:not([data-theme="glass"]) #trending button,
+html[data-theme]:not([data-theme="glass"]) #allApps button,
+html[data-theme]:not([data-theme="glass"]) #appMenu button{
+ color:var(--t-fg)!important;border-color:var(--t-line)!important}
+html[data-theme]:not([data-theme="glass"]) #trending button:focus-visible,
+html[data-theme]:not([data-theme="glass"]) #allApps button:focus-visible,
+html[data-theme]:not([data-theme="glass"]) #appMenu button:focus-visible{
+ outline:3px solid var(--t-focus)!important;box-shadow:none!important}
+html[data-theme]:not([data-theme="glass"]) #trending #browseSearch{
+ background:var(--t-card)!important;color:var(--t-fg)!important;border:1px solid var(--t-line)!important}
+
 </style></head><body>
 <div class="wallpaper" id="w1"></div><div class="wallpaper" id="w2" style="opacity:0"></div><div class="wallpaper" id="w3" style="opacity:0"></div><div class="wallpaper" id="w4" style="opacity:0"></div><div class="wallpaper" id="customImage" style="opacity:0"></div><div class="wallpaper" id="onlineWallpaper" style="opacity:0"></div><div class="wallpaper" id="focusBackdrop" aria-hidden="true"></div><div id="shade"></div>
 <nav id="cinemaRail" aria-label="Navigasi Glass ONN">
