@@ -276,7 +276,7 @@ public class MainActivity extends Activity {
     }
     String getGlassTheme(){return prefs().getString("theme","glass");}
     void setTheme(String value){
-        if(!"glass".equals(value)&&!"bright".equals(value)&&!"dark".equals(value))return;
+        if(!"glass".equals(value)&&!"bright".equals(value)&&!"dark".equals(value)&&!"pastel".equals(value)&&!"grey".equals(value)&&!"colourful".equals(value))return;
         prefs().edit().putString("theme",value).apply();remoteUpdated();
     }
 

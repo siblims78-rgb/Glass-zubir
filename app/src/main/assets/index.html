@@ -660,6 +660,53 @@ html[data-theme="bright"] .glass{box-shadow:0 10px 30px rgba(15,30,55,.20),inset
 .themeChoice.selected{border-color:#b0eeff;background:#285b76;box-shadow:0 0 0 2px #9be5f777}
 #settings .themeChoice:focus{outline:3px solid #c5f4ff}
 
+
+/* Multi-theme design system • Glass ONN: user-selectable, remote-friendly palettes */
+:root{--theme-focus:#bfefff}
+html[data-theme="pastel"]{--ink:#263d44;--muted:#4b6870;--accent:#519e92;--border:rgba(81,130,137,.31);--glass:rgba(245,248,241,.92);--theme-focus:#3b8b88;color-scheme:light}
+html[data-theme="pastel"] #shade{background:linear-gradient(180deg,rgba(235,243,234,.35),rgba(230,237,231,.24) 62%,rgba(225,235,231,.58))!important}
+html[data-theme="pastel"] #ui .hero .clockpanel,html[data-theme="pastel"] #ui .hero .rightpanel,html[data-theme="pastel"] #ui .weatherWidget{background:rgba(247,249,241,.88)!important;color:#233b41!important;border:1px solid rgba(79,125,121,.25)!important;box-shadow:0 10px 29px rgba(25,57,63,.1)!important}
+html[data-theme="pastel"] #ui .hero .clockpanel *,html[data-theme="pastel"] #ui .hero .rightpanel *,html[data-theme="pastel"] #ui .weatherWidget *{color:#29484a!important;text-shadow:none!important}
+html[data-theme="pastel"] #ui .homeTrendHeader,html[data-theme="pastel"] #ui .homeTrendHeader small,html[data-theme="pastel"] #ui .header{color:#f9ffff!important;text-shadow:0 2px 9px #17323eaa}
+html[data-theme="pastel"] #cinemaRail{background:rgba(241,247,239,.94)!important;border-color:rgba(90,133,130,.28)!important}
+html[data-theme="pastel"] #cinemaRail .railBtn{color:#31555a!important}
+html[data-theme="pastel"] #ui .appMedia{background:rgba(242,247,240,.8)!important;box-shadow:0 5px 18px #1b343337!important}
+html[data-theme="pastel"] #ui .homeTrendCard{background:#213a43!important}
+html[data-theme="pastel"] #ui .homeTrendCard .homeTrendMeta,html[data-theme="pastel"] #ui .homeTrendCard .homeTrendMeta *{color:#f9fcff!important}
+html[data-theme="grey"]{--ink:#f0f2f3;--muted:#bcc7ce;--accent:#bacbd2;--border:#a5b0b344;--glass:rgba(34,43,49,.91);--theme-focus:#d8e9ef;color-scheme:dark}
+html[data-theme="grey"] #shade{background:linear-gradient(180deg,rgba(22,27,31,.45),rgba(26,32,37,.20) 42%,rgba(19,25,28,.74))!important}
+html[data-theme="grey"] #ui .hero .clockpanel,html[data-theme="grey"] #ui .hero .rightpanel,html[data-theme="grey"] #ui .weatherWidget{background:rgba(43,51,58,.87)!important;border-color:#a1adb840!important}
+html[data-theme="grey"] #cinemaRail{background:rgba(27,34,40,.95)!important;border-color:#abb4ba44!important}
+html[data-theme="grey"] #ui .appMedia{background:#333d45ad!important}
+html[data-theme="grey"] #ui .homeTrendCard{background:#20282d!important;border-color:#c7d1d144!important}
+html[data-theme="grey"] #ui .homeTrendCard:focus{box-shadow:0 0 0 3px #c8dadf,0 8px 24px #0006!important}
+html[data-theme="dark"] #ui .hero .clockpanel,html[data-theme="dark"] #ui .hero .rightpanel,html[data-theme="dark"] #ui .weatherWidget{background:rgba(5,8,12,.94)!important;border-color:#49526055!important;box-shadow:none!important}
+html[data-theme="dark"] #cinemaRail{background:rgba(5,7,11,.96)!important}
+html[data-theme="dark"] #ui .homeTrendCard{background:#05070b!important}
+html[data-theme="colourful"]{--ink:#f5faff;--muted:#d2d6f3;--accent:#84e3dc;--border:rgba(162,180,255,.43);--glass:rgba(31,31,67,.86);--theme-focus:#ffe49b;color-scheme:dark}
+html[data-theme="colourful"] #shade{background:linear-gradient(125deg,rgba(13,30,72,.63),rgba(67,30,80,.24) 52%,rgba(9,54,78,.53)),linear-gradient(0deg,#080e2cbb,transparent 64%)!important}
+html[data-theme="colourful"] #ui .hero .clockpanel,html[data-theme="colourful"] #ui .hero .rightpanel,html[data-theme="colourful"] #ui .weatherWidget{background:linear-gradient(130deg,rgba(26,39,89,.92),rgba(70,43,105,.86))!important;border:1px solid rgba(181,164,255,.46)!important}
+html[data-theme="colourful"] #cinemaRail{background:linear-gradient(180deg,rgba(33,32,80,.96),rgba(27,58,86,.95))!important}
+html[data-theme="colourful"] #ui .appMedia{background:linear-gradient(140deg,#233e72aa,#703e81aa)!important}
+html[data-theme="colourful"] #ui .homeTrendCard:focus{box-shadow:0 0 0 3px #ffe198,0 0 22px #bd7df166!important}
+html[data-theme="colourful"] #ui .homeTrendHeader{color:#f8f4ff!important}
+html[data-theme="pastel"] #ui button:focus-visible,html[data-theme="grey"] #ui button:focus-visible,html[data-theme="colourful"] #ui button:focus-visible{outline:3px solid var(--theme-focus)!important;outline-offset:2px}
+.themePicker{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px!important}
+.themeChoice{display:flex!important;flex-direction:column;align-items:flex-start;gap:6px!important;min-height:78px!important;padding:12px 14px!important}
+.themeChoice::before{content:"";height:22px;width:100%;border-radius:6px;border:1px solid #ffffff45;background:linear-gradient(90deg,#5f8392,#c3ddea);display:block}
+.themeChoice[data-theme="pastel"]::before{background:linear-gradient(90deg,#d3eadf,#f4d9db,#d3e0f2)}
+.themeChoice[data-theme="grey"]::before{background:linear-gradient(90deg,#444e58,#8d9ca7,#d4dce0)}
+.themeChoice[data-theme="dark"]::before{background:linear-gradient(90deg,#05070c,#252c34,#3b4550)}
+.themeChoice[data-theme="colourful"]::before{background:linear-gradient(90deg,#6b45c6,#ea66a0,#ffe090,#63d1dd)}
+.themeChoice[data-theme="bright"]::before{background:linear-gradient(90deg,#3b88c3,#9cece9,#efffff)}
+.themeChoice[data-theme="glass"]::before{background:linear-gradient(90deg,#142b45,#7399af88,#ddfaffbb)}
+.themeChoice.selected{border-color:#d3ecf3!important;background:#2c4e5a!important}
+html[data-theme="pastel"] #settings .settingsNavItem.active,html[data-theme="pastel"] #settings .themeChoice.selected{background:#284e53!important;color:white!important}
+html[data-theme="grey"] #settings .settingsNavItem.active,html[data-theme="grey"] #settings .themeChoice.selected{background:#4a5863!important;color:#fff!important}
+html[data-theme="colourful"] #settings .settingsNavItem.active,html[data-theme="colourful"] #settings .themeChoice.selected{background:#493d76!important;color:#fff!important;border-color:#e0cfff!important}
+@media(max-width:950px){.themePicker{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){html[data-theme] #focusBackdrop{transition:none!important}}
+
 </style></head><body>
 <div class="wallpaper" id="w1"></div><div class="wallpaper" id="w2" style="opacity:0"></div><div class="wallpaper" id="w3" style="opacity:0"></div><div class="wallpaper" id="w4" style="opacity:0"></div><div class="wallpaper" id="customImage" style="opacity:0"></div><div class="wallpaper" id="onlineWallpaper" style="opacity:0"></div><div class="wallpaper" id="focusBackdrop" aria-hidden="true"></div><div id="shade"></div>
 <nav id="cinemaRail" aria-label="Navigasi Glass ONN">
@@ -701,7 +748,7 @@ html[data-theme="bright"] .glass{box-shadow:0 10px 30px rgba(15,30,55,.20),inset
   <main class="settingsContent" id="settingsScroll">
   <section class="settingsPage active" data-settings-page="appearance">
     <div class="settingsGroup"><h3 data-en="Language" data-ms="Bahasa">Language</h3><div class="languageChoice"><button class="button" id="langEnglish" onclick="setLanguage('en')">English</button><button class="button" id="langMalay" onclick="setLanguage('ms')">Bahasa Melayu</button></div></div>
-    <div class="settingsGroup"><h3>TV Theme</h3><p class="settingsHint">Choose Glass, Bright or Dark. Settings stays solid dark for readability.</p><div class="themePicker" id="themePicker"></div></div>
+    <div class="settingsGroup"><h3>TV Theme</h3><p class="settingsHint">Pick a palette: Pastel, Grey, Dark, Colourful, Glass or Bright. Use your remote to switch instantly.</p><div class="themePicker" id="themePicker"></div></div>
     <div class="settingsGroup"><h3 data-en="Clock Style" data-ms="Gaya Jam">Clock Style</h3><p class="settingsHint" data-en="Personalise the clock font, size, colour and effect." data-ms="Pilih font, saiz, warna dan efek jam.">Personalise the clock font, size, colour and effect.</p><div class="clockStyleSection" id="clockStyleSection"><div id="clockStyleEditor"></div></div></div>
     <div class="settingsGroup"><h3 data-en="Wallpaper" data-ms="Wallpaper">Wallpaper</h3><div class="gallery" id="wallpaperGallery"></div><h4 data-en="Wallpaper Source" data-ms="Sumber Wallpaper">Wallpaper Source</h4><div class="places settingsOptionGrid" id="sourceButtons"></div><p class="hint">Gambar sendiri: buka Companion di telefon, pilih gambar dan Fixed / Shuffle. Semua fail disimpan dalam cache TV sahaja.</p></div>
     <div class="settingsGroup"><h3 data-en="Glass Panels" data-ms="Panel Kaca">Glass Panels</h3><div class="glassControls"><label>Opacity <strong id="glassOpacityValue">50%</strong><input tabindex="0" type="range" id="glassOpacityRange" min="8" max="60" step="2" value="50" oninput="setGlassOpacity(this.value)"><span class="rangeButtons"><button class="stepButton" onclick="adjustGlass('opacity',-2)">−</button><button class="stepButton" onclick="adjustGlass('opacity',2)">+</button></span></label><label>Blur <strong id="glassBlurValue">0px</strong><input tabindex="0" type="range" id="glassBlurRange" min="0" max="18" step="1" value="0" oninput="setGlassBlur(this.value)"><span class="rangeButtons"><button class="stepButton" onclick="adjustGlass('blur',-1)">−</button><button class="stepButton" onclick="adjustGlass('blur',1)">+</button></span></label></div></div>
@@ -862,11 +909,11 @@ function applyClockStyle(){
 }
 
 function applyTheme(){
- document.documentElement.dataset.theme=['glass','bright','dark'].includes(theme)?theme:'glass';
+ document.documentElement.dataset.theme=['pastel','grey','dark','colourful','glass','bright'].includes(theme)?theme:'glass';
 }
 function buildThemePicker(){const area=$('themePicker');if(!area)return;area.replaceChildren();
- for(const [key,label] of [['glass','Glass'],['bright','Bright'],['dark','Dark']]){
-  const b=document.createElement('button');b.className='themeChoice'+(theme===key?' selected':'');b.textContent=label;
+ for(const [key,label] of [['pastel','Pastel'],['grey','Grey'],['dark','Dark'],['colourful','Colourful'],['glass','Glass'],['bright','Bright']]){
+  const b=document.createElement('button');b.className='themeChoice'+(theme===key?' selected':'');b.dataset.theme=key;b.setAttribute('aria-pressed',String(theme===key));b.textContent=label;
   b.onclick=()=>{theme=key;if(bridge()&&Native.setTheme)Native.setTheme(key);applyTheme();buildThemePicker();area.querySelector('.selected')?.focus();};area.appendChild(b);
  }
 }

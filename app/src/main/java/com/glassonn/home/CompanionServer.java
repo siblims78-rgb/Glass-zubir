@@ -187,7 +187,7 @@ final class CompanionServer {
                 case "appsFirst":owner.setAppsFirst("true".equals(v));break;
                 case "showAppTitles":owner.setShowAppTitles("true".equals(v));break;
                 case "recoSource":if(v.matches("cinemeta|tmdb|charts|trakt"))owner.setRecommendationSource(v);else ok=false;break;
-                case "theme":if(v.matches("glass|dark|bright"))owner.setTheme(v);else ok=false;break;
+                case "theme":if(v.matches("pastel|grey|dark|colourful|glass|bright"))owner.setTheme(v);else ok=false;break;
                 case "fx":owner.setWeatherFx("true".equals(v));break;
                 case "soundFx":owner.setSoundFx("true".equals(v));break;
                 case "glassOpacity":try{int o=Integer.parseInt(v);if(o>=8&&o<=60)owner.setGlassOpacity(o);else ok=false;}catch(Exception ex){ok=false;}break;
