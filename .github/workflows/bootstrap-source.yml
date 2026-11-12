@@ -1,0 +1,44 @@
+name: Bootstrap tracked Android source
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/bootstrap-source.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract-and-commit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Import tested 0.6.5 source as normal tracked files
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f settings.gradle ]; then
+            echo "Native Android source already present; nothing to migrate."
+            exit 0
+          fi
+          mkdir -p "$RUNNER_TEMP/glassonn-source"
+          unzip -o -q GlassONN-v0.6.5-Download.zip -d "$RUNNER_TEMP/glassonn-source"
+          SOURCE="$RUNNER_TEMP/glassonn-source"
+          test -f "$SOURCE/settings.gradle"
+          test -f "$SOURCE/app/src/main/java/com/glassonn/home/MainActivity.java"
+          cp -a "$SOURCE/app" .
+          cp "$SOURCE/settings.gradle" "$SOURCE/build.gradle" "$SOURCE/gradle.properties" .
+          # Preserve known v0.6.5 CI compatibility fix.
+          sed -i 's/places\[getPlace()\]/places[MainActivity.this.getPlace()]/g' app/src/main/java/com/glassonn/home/MainActivity.java
+          git add -f app settings.gradle build.gradle gradle.properties
+          if git diff --cached --quiet; then
+            echo "No tracked source changes needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: track Glass ONN Android source (v0.6.5 baseline)"
+          git push origin HEAD:main
