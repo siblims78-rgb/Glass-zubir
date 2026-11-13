@@ -1284,6 +1284,69 @@ html[data-theme][data-panels-transparent] body #ui #homeShelfStack .traktProgres
 html[data-theme][data-panels-transparent] body #ui #homeShelfStack .traktProgress span{
  background:var(--t-focus,#f0f4fc)!important}
 
+
+/* v0.7.0 selected-content billboard: artwork stays in upper two thirds. */
+#ui #movieHeroInfo[hidden]{display:none!important}
+#ui #movieHeroInfo{
+ position:fixed!important;z-index:11!important;left:clamp(35px,5.5vw,110px)!important;
+ top:clamp(95px,18.5vh,215px)!important;bottom:auto!important;
+ width:min(46vw,800px)!important;max-height:39vh!important;
+ display:flex!important;flex-direction:column!important;justify-content:center!important;
+ gap:clamp(6px,.85vh,12px)!important;pointer-events:none!important;color:#fff!important;
+ opacity:0;transform:translateY(12px);transition:opacity .28s ease,transform .28s ease}
+#ui.movie-focused #movieHeroInfo{opacity:1!important;transform:none!important}
+#ui #movieHeroEyebrow{font:650 clamp(10px,.85vw,15px) Arial,sans-serif!important;
+ text-transform:uppercase!important;letter-spacing:.18em!important;color:#d8e5ee!important;text-shadow:0 1px 5px #000c!important}
+#ui #movieHeroTitle{font:720 clamp(32px,3.6vw,68px) Arial,sans-serif!important;
+ color:#fff!important;line-height:1.07!important;letter-spacing:-.025em!important;
+ text-shadow:0 3px 14px #000d!important;margin:0!important;max-height:2.2em!important;
+ display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+#ui #movieHeroMeta{font-size:clamp(13px,1.04vw,19px)!important;font-weight:600!important;
+ color:#e4eaf1!important;text-shadow:0 2px 6px #000d!important}
+#ui #movieHeroSynopsis{font-size:clamp(12px,.95vw,18px)!important;line-height:1.4!important;
+ max-width:670px!important;color:#e7e9ef!important;max-height:4.2em!important;
+ display:-webkit-box!important;-webkit-line-clamp:3!important;-webkit-box-orient:vertical!important;
+ overflow:hidden!important;text-shadow:0 2px 7px #000c!important;margin:0!important}
+#ui #movieHeroHint{font-size:clamp(10px,.79vw,15px)!important;color:#dae1ef!important;
+ letter-spacing:.05em!important;padding-top:4px;text-shadow:0 1px 6px #000c!important}
+#ui.movie-focused>.hero{opacity:0!important;pointer-events:none!important;transform:translateY(-16px)!important}
+#focusBackdrop.show{opacity:1!important;transition:opacity .35s ease!important}
+#focusBackdrop{height:67vh!important;min-height:0!important;background-position:center 36%!important;
+ background-size:cover!important;mask-image:linear-gradient(to bottom,#000 0%,#000 73%,transparent 100%)!important}
+#ui.movie-focused~#shade,#shade:has(~#ui.movie-focused){
+ background:linear-gradient(90deg,#02050cdd,transparent 70%),linear-gradient(to top,#000f,transparent 75%)!important}
+@media(max-height:650px){#ui #movieHeroInfo{top:16vh!important;max-height:43vh!important}}
+@media(prefers-reduced-motion:reduce){#ui #movieHeroInfo,#focusBackdrop{transition:none!important}}
+/* Central palette overrides for matte themes. Opacity is applied in one place. */
+html[data-theme]:not([data-theme="glass"]) #settings .settingsShell,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsSidebar,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsWorkspace,
+html[data-theme]:not([data-theme="glass"]) #settings .settingsGroup{
+ background:var(--tv-surface)!important;color:var(--tv-text)!important;
+ border-color:var(--home-panel-stroke)!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important}
+html[data-theme]:not([data-theme="glass"]) #settings .settingsNavItem:focus,
+html[data-theme]:not([data-theme="glass"]) #settings button:focus-visible{
+ outline:2px solid var(--tv-focus)!important;outline-offset:2px!important;box-shadow:none!important}
+html[data-theme]:not([data-theme="glass"]) #ui>.apps,
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .homeTrendCard,
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .traktCard{
+ background:var(--home-panel-bg)!important;border-color:var(--home-panel-stroke)!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:var(--home-panel-shadow)!important}
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .homeTrendCard,
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .traktCard{
+ background:var(--home-card-bg)!important}
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .homeTrendMeta,
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .homeTrendArtwork{
+ background:var(--home-card-bg)!important;border-color:var(--home-panel-stroke)!important}
+html[data-theme]:not([data-theme="glass"]) #ui .dock .appMedia{
+ background:transparent!important;border:0!important;box-shadow:none!important}
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .homeTrendCard:focus,
+html[data-theme]:not([data-theme="glass"]) #ui #homeShelfStack .traktCard:focus,
+html[data-theme]:not([data-theme="glass"]) #ui>.apps .app:focus{
+ outline:2px solid var(--tv-focus)!important;outline-offset:2px!important;
+ box-shadow:none!important}
+
 </style></head><body>
 <div class="wallpaper" id="w1"></div><div class="wallpaper" id="w2" style="opacity:0"></div><div class="wallpaper" id="w3" style="opacity:0"></div><div class="wallpaper" id="w4" style="opacity:0"></div><div class="wallpaper" id="customImage" style="opacity:0"></div><div class="wallpaper" id="onlineWallpaper" style="opacity:0"></div><div class="wallpaper" id="focusBackdrop" aria-hidden="true"></div><div id="shade"></div>
 <nav id="cinemaRail" aria-label="Main navigation">
@@ -1293,6 +1356,13 @@ html[data-theme][data-panels-transparent] body #ui #homeShelfStack .traktProgres
 <button class="railBtn" id="railSettings" onclick="showSettings()">Settings</button>
 </nav><div id="weatherFX" aria-hidden="true"><canvas id="weatherCanvas"></canvas></div>
 <div id="ui">
+ <section id="movieHeroInfo" aria-live="off" aria-label="Selected movie details" hidden>
+  <div id="movieHeroEyebrow">NOW SELECTED</div>
+  <h1 id="movieHeroTitle"></h1>
+  <div id="movieHeroMeta"></div>
+  <p id="movieHeroSynopsis"></p>
+  <div id="movieHeroHint">OK · Details</div>
+ </section>
  <div class="header"><div class="brand">GLASS <span>ONN</span></div></div>
  <div class="hero">
   <section class="glass clockpanel"><div><div class="eyebrow">Selamat datang</div><div class="time" id="clock">--:--</div><div class="date" id="date">Malaysia • GMT+8</div></div><div class="weatherrow"><div><div class="eyebrow">Cuaca semasa</div><div class="temp" id="temperature">--°C</div></div><div style="text-align:right"><div style="font-size:clamp(23px,4vw,59px)" id="weatherIcon">☁</div><div class="subtle" id="weatherLabel">Sedang mendapatkan cuaca</div><div class="fxTestRow"><button class="weatherTest" id="homeFxDemo" onclick="testWeatherFx()" title="Uji animasi cuaca">▶ Uji FX</button><button class="weatherTest" onclick="testLightningFx()" title="Uji kilat lembut">⚡ Kilat</button></div></div></div></section>
@@ -1592,6 +1662,12 @@ function renderTraktShelf(){
   info.textContent=value.toFixed(0)+'% siap'+(Number.isFinite(Number(item.minutesLeft))&&item.minutesLeft>0?' · ~'+item.minutesLeft+' min lagi':'');
   const bar=document.createElement('div');bar.className='traktProgress';const fill=document.createElement('span');fill.style.width=value+'%';bar.appendChild(fill);
   b.append(image,title,info,bar);
+  b.dataset.focusKey='trakt:'+String(item.imdbId||item.title||'').slice(0,120);
+  b.onfocus=()=>focusMovieBackdrop({
+   title:item.title||'',type:item.type||'Siri',year:item.year||'',
+   poster:/^tt[0-9]{7,10}$/.test(imdb)?'https://images.metahub.space/poster/medium/'+encodeURIComponent(imdb)+'/img':'',
+   overview:item.episode?'Continue Watching · '+String(item.episode).slice(0,95):''
+  });
   b.onclick=()=>{
    const imdbId=String(item.imdbId||'');
    if(bridge()&&Native.openCinemeta&&/^tt[0-9]{7,10}$/.test(imdbId))Native.openCinemeta(item.type==='Siri'?'series':'movie',imdbId);
@@ -1829,17 +1905,29 @@ function showCinematicWallpaper(){
 // D-pad focus previews a film's official landscape backdrop, then restores normal wallpaper.
 let focusBackdropSerial=0,focusBackdropRestore=0;
 function validMovieImage(url){try{const u=new URL(String(url||''));return u.protocol==='https:'&&/^([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]{2,}$/i.test(u.hostname)&&u.href.length<900?u.href:'';}catch(e){return '';}}
+function showMovieHeroDetails(item){
+ const el=$('movieHeroInfo');if(!el||!item)return;
+ const title=String(item.title||item.name||'').trim();if(!title)return;
+ const details=[item.type,item.year,Number.isFinite(Number(item.score))&&Number(item.score)>0?'★ '+Number(item.score).toFixed(1):''].filter(Boolean);
+ $('movieHeroEyebrow').textContent=item.source?String(item.source).slice(0,42):'FEATURED TITLE';
+ $('movieHeroTitle').textContent=title.slice(0,150);
+ $('movieHeroMeta').textContent=details.join('  ·  ');
+ $('movieHeroSynopsis').textContent=String(item.overview||item.description||'').trim().slice(0,260);
+ $('movieHeroHint').textContent='OK · Details';
+ el.hidden=false;$('ui').classList.add('movie-focused');
+}
 function focusMovieBackdrop(item){
- // Movie focus temporarily overlays even a personal photo; it never changes the saved wallpaper.
+ // Hero selection never overwrites the personal photo stored on ONN.
  clearTimeout(focusBackdropRestore);
- if(!item)return;
+ if(!item||!String(item.title||item.name||'').trim())return;
+ showMovieHeroDetails(item);
  const full=validMovieImage(item.background),fallback=validMovieImage(item.poster),url=full||fallback;
- if(!url)return;
  const serial=++focusBackdropSerial;
+ if(!url){$('focusBackdrop').classList.remove('show');return;}
  const image=new Image();image.onload=()=>{
   if(serial!==focusBackdropSerial)return;
   const el=$('focusBackdrop');el.style.backgroundImage='url("'+url.replace(/"/g,'%22')+'")';
-  el.style.filter=full?'brightness(.78) saturate(1.02)':'brightness(.55) saturate(.82) blur(12px)';
+  el.style.filter=full?'brightness(.72) saturate(1.01)':'brightness(.48) saturate(.86) blur(9px)';
   el.classList.add('show');
  };
  image.onerror=()=>{if(serial===focusBackdropSerial)$('focusBackdrop').classList.remove('show');};
@@ -1847,11 +1935,14 @@ function focusMovieBackdrop(item){
 }
 function stopMovieBackdrop(immediately=false){
  clearTimeout(focusBackdropRestore);
- const restore=()=>{focusBackdropSerial++;$('focusBackdrop').classList.remove('show');};
- if(immediately)restore();else focusBackdropRestore=setTimeout(restore,320);
+ const restore=()=>{
+  focusBackdropSerial++;$('focusBackdrop').classList.remove('show');
+  $('ui')?.classList.remove('movie-focused');if($('movieHeroInfo'))$('movieHeroInfo').hidden=true;
+ };
+ if(immediately)restore();else focusBackdropRestore=setTimeout(restore,240);
 }
 document.addEventListener('focusin',e=>{
- if(!e.target.closest('.homeTrendCard,.trendingCard')&&!$('trending').classList.contains('open'))stopMovieBackdrop();
+ if(!e.target.closest('.homeTrendCard,.traktCard,.trendingCard')&&!$('trending').classList.contains('open'))stopMovieBackdrop();
 });
 function applyWallpaperMode(){
  if(wallpaperMode!=='auto'&&/^[0-3]$/.test(wallpaperMode))scene=Number(wallpaperMode);
@@ -1945,13 +2036,14 @@ function buildCardOptions(){
   el.appendChild(b);
  }
 }
+// v0.7.0: single source of truth for theme surfaces and focus states.
 const HOME_PALETTE={
- glass:{panel:[10,22,40],card:[14,26,42],stroke:[220,241,252],ink:'#fff'},
- pastel:{panel:[246,248,241],card:[228,238,233],stroke:[104,142,139],ink:'#28464a'},
- grey:{panel:[46,55,63],card:[54,64,72],stroke:[179,193,203],ink:'#f5f7fa'},
- dark:{panel:[10,13,18],card:[22,27,33],stroke:[148,165,180],ink:'#f5f7fa'},
- colourful:{panel:[48,36,76],card:[62,46,92],stroke:[194,165,236],ink:'#faf8ff'},
- bright:{panel:[246,251,254],card:[220,239,247],stroke:[108,163,189],ink:'#284755'}
+ glass:{panel:[10,22,40],card:[14,26,42],stroke:[220,241,252],ink:'#fff',focus:'#d9f3ff',surface:'#152334',muted:'#c3d4e7'},
+ pastel:{panel:[246,248,241],card:[228,238,233],stroke:[104,142,139],ink:'#28464a',focus:'#42796a',surface:'#f1f5ed',muted:'#5a706e'},
+ grey:{panel:[46,55,63],card:[54,64,72],stroke:[179,193,203],ink:'#f5f7fa',focus:'#d5dce2',surface:'#303940',muted:'#bfccd3'},
+ dark:{panel:[10,13,18],card:[22,27,33],stroke:[148,165,180],ink:'#f5f7fa',focus:'#f1f3f6',surface:'#10151a',muted:'#b1b8c4'},
+ colourful:{panel:[48,36,76],card:[62,46,92],stroke:[194,165,236],ink:'#faf8ff',focus:'#ffe4a2',surface:'#32284b',muted:'#ded1f0'},
+ bright:{panel:[246,251,254],card:[220,239,247],stroke:[108,163,189],ink:'#284755',focus:'#427a94',surface:'#f1f8fc',muted:'#577683'}
 };
 function panelRGBA(rgb,a){return 'rgba('+rgb.join(',')+','+Math.max(0,Math.min(1,a)).toFixed(3)+')';}
 function applyGlass(){
@@ -1964,6 +2056,11 @@ function applyGlass(){
  root.style.setProperty('--home-panel-shadow',alpha===0?'none':'0 6px 22px rgba(0,0,0,'+(alpha*.18).toFixed(3)+')');
  root.style.setProperty('--home-panel-blur',theme==='glass'&&opacity>0?'blur('+blur+'px)':'none');
  root.style.setProperty('--home-meta-ink',alpha<.35?'#fff':colors.ink);
+ root.style.setProperty('--tv-focus',colors.focus);
+ root.style.setProperty('--tv-surface',colors.surface);
+ root.style.setProperty('--tv-muted',colors.muted);
+ root.style.setProperty('--tv-text',colors.ink);
+ root.style.setProperty('--tv-panel-opacity',String(alpha));
  root.dataset.panelsTransparent=alpha<.35?'true':'false';
  if($('glassOpacityRange'))$('glassOpacityRange').value=opacity;
  if($('glassBlurRange')){$('glassBlurRange').value=blur;$('glassBlurRange').disabled=theme!=='glass';}
@@ -2484,6 +2581,7 @@ function cinematicTile(item,i,recent=false){
  const sub=document.createElement('span');sub.textContent=(recent?'Dalam Next Play • ':'')+(item.year||item.type||'')+' · '+(item.source||'Katalog');
  detail.append(name,sub);b.appendChild(detail);
  b.onclick=()=>window.openBrowseItem(item);
+ b.dataset.focusKey=trendKey(item);
  b.onfocus=()=>focusMovieBackdrop(item);
  b.onmouseenter=()=>focusMovieBackdrop(item);
  return b;
