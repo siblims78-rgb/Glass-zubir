@@ -1,6 +1,8 @@
 package com.glassonn.home;
 
 import android.app.Activity;
+import android.content.res.AssetFileDescriptor;
+import android.os.SystemClock;
 import android.app.role.RoleManager;
 import android.view.KeyEvent;
 import android.media.MediaPlayer;
@@ -60,6 +62,8 @@ public class MainActivity extends Activity {
     private volatile boolean textInputFocused = false;
     private volatile String wallpaperDisplayedId = "";
     private volatile String wallpaperDisplayError = "Not yet shown";
+    private volatile boolean appForeground=false;
+    private final java.util.concurrent.atomic.AtomicLong audioSerial=new java.util.concurrent.atomic.AtomicLong();
 
     private final String[][] places = {
         {"Setapak / Kuala Lumpur", "WLY01", "3.205", "101.718"},
@@ -410,90 +414,80 @@ public class MainActivity extends Activity {
     boolean getWeatherFx(){return prefs().getBoolean("weather_fx",true);}
     boolean getSoundFx(){return prefs().getBoolean("sound_fx",true);}
     void setSoundFx(boolean on){prefs().edit().putBoolean("sound_fx",on).apply();if(!on)stopWeatherAudio();remoteUpdated();}
-    void soundStatus(String status){sendJs("if(window.onSoundStatus)window.onSoundStatus("+JSONObject.quote(status)+")");}
-    void abandonSoundFocus(){
-        if(audioManager!=null&&soundFocus!=null){try{audioManager.abandonAudioFocusRequest(soundFocus);}catch(Exception ignored){}}
-        soundFocus=null;
+
+    void soundStatus(String msg){sendJs("if(window.onSoundStatus)window.onSoundStatus("+JSONObject.quote(msg)+")");}
+    // Play short balanced recordings directly from the APK; never reuse stale cached OGG.
+    private static final String[] NATURE_KEYS={"sun","cloud","rain","storm"};
+    private static final String[] NATURE_FILES={"zen_clear.ogg","zen_cloud.ogg","zen_rain.ogg","zen_storm.ogg"};
+    private int natureIndex(String key){
+        for(int i=0;i<NATURE_KEYS.length;i++)if(NATURE_KEYS[i].equals(key))return i;
+        return -1;
+    }
+    private int natureDefault(int index){return index==0?42:index==1?30:index==2?18:27;}
+    int getNatureVolume(String key){
+        int i=natureIndex(key);return i<0?0:Math.max(0,Math.min(100,prefs().getInt("nature_level_"+key,natureDefault(i))));
+    }
+    void setNatureVolume(String key,int value){
+        if(natureIndex(key)<0||value<0||value>100)return;
+        prefs().edit().putInt("nature_level_"+key,value).apply();remoteUpdated();
     }
     private void stopWeatherAudioOnUi(){
-        if(weatherSound!=null){try{weatherSound.stop();}catch(Exception ignored){}try{weatherSound.release();}catch(Exception ignored){}weatherSound=null;}
-        abandonSoundFocus();
+        if(weatherSound==null)return;
+        MediaPlayer m=weatherSound;weatherSound=null;
+        try{m.stop();}catch(Exception ignored){}
+        try{m.release();}catch(Exception ignored){}
     }
     void stopWeatherAudio(){
-        // IMPORTANT: execute immediately on UI thread so a delayed stop never kills the newly started recording.
+        audioSerial.incrementAndGet();
         if(Looper.myLooper()==Looper.getMainLooper())stopWeatherAudioOnUi();
         else ui.post(this::stopWeatherAudioOnUi);
     }
-    // Public-domain field recording from Wikimedia Commons: File:Rain.ogg by ジダネ (2007).
-    // Download asynchronously once. The offline original ambience stays available if offline.
-    private static final String REAL_RAIN_URL="https://upload.wikimedia.org/wikipedia/commons/3/3d/Rain.ogg";
-    private volatile boolean rainDownloadAttempted=false;
-    private File rainRecording(){return new File(getCacheDir(),"real_rain_pd_v056.ogg");}
-    private void prefetchRealRain(){
-        if(rainDownloadAttempted||rainRecording().length()>10000)return;
-        rainDownloadAttempted=true;
-        new Thread(()->{
-            HttpURLConnection conn=null;File temp=null;
-            try{
-                conn=(HttpURLConnection)new URL(REAL_RAIN_URL).openConnection();
-                conn.setConnectTimeout(6000);conn.setReadTimeout(8000);
-                if(conn.getResponseCode()!=200)return;
-                int announced=conn.getContentLength();if(announced>700000)return;
-                temp=new File(getCacheDir(),"real_rain_partial.ogg");
-                try(InputStream in=conn.getInputStream();FileOutputStream out=new FileOutputStream(temp)){
-                    byte[] buffer=new byte[8192];int n,used=0;
-                    while((n=in.read(buffer))!=-1){used+=n;if(used>700000)return;out.write(buffer,0,n);}
-                }
-                if(temp.length()>10000)temp.renameTo(rainRecording());
-            }catch(Exception ignored){}finally{
-                if(conn!=null)conn.disconnect();if(temp!=null&&temp.exists())temp.delete();
-            }
-        },"GlassRainCache").start();
-    }
-    // Public-domain nature recordings from Wikimedia Commons, licensed individually in AUDIO_LICENSES_065.md.
-    // 4 distinct conditions. Bundled by Gradle with verified source filenames; cached locally at playback.
-    private static final String[] NATURE_KEYS={"sun","cloud","rain","storm"};
-    private static final String[] NATURE_FILENAMES={"zen_clear.ogg","zen_cloud.ogg","zen_rain.ogg","zen_storm.ogg"};
-    private volatile long latestAudioRequest=0;
     void playWeatherAudio(String kind){
+        final int index=natureIndex(kind);if(index<0)return;
         if(!getSoundFx()){soundStatus("Nature audio OFF");return;}
-        int position=-1;
-        for(int i=0;i<NATURE_KEYS.length;i++)if(NATURE_KEYS[i].equals(kind))position=i;
-        if(position<0)return;
-        final int index=position;
-        final long request=++latestAudioRequest;
-        new Thread(()->{
-            final File local=new File(getCacheDir(),NATURE_FILENAMES[index]);
-            if(!local.exists()||local.length()<5000){
-                try(InputStream input=getAssets().open("nature/"+NATURE_FILENAMES[index]);FileOutputStream output=new FileOutputStream(local)){
-                    byte[] data=new byte[8192];int n;
-                    while((n=input.read(data))!=-1)output.write(data,0,n);
-                }catch(Exception ex){local.delete();soundStatus("Missing natural sound: "+NATURE_KEYS[index]);return;}
-            }
-            ui.post(()->{
-                if(request!=latestAudioRequest||isFinishing()||isDestroyed()||!getSoundFx())return;
-                stopWeatherAudioOnUi();
-                try{
-                    audioManager=(AudioManager)getSystemService(AUDIO_SERVICE);
-                    AudioAttributes attr=new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
-                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build();
-                    soundFocus=new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
-                         .setAudioAttributes(attr).build();
-                    if(audioManager!=null&&audioManager.requestAudioFocus(soundFocus)!=AudioManager.AUDIOFOCUS_REQUEST_GRANTED){
-                        soundStatus("TV audio focus unavailable");return;
+        final long request=audioSerial.incrementAndGet();
+        ui.post(()->{
+            if(request!=audioSerial.get()||!appForeground||isFinishing()||isDestroyed()||!getSoundFx())return;
+            stopWeatherAudioOnUi();
+            final int setting=getNatureVolume(kind);
+            if(setting==0){soundStatus(kind+" volume 0%");return;}
+            MediaPlayer m=null;
+            try(AssetFileDescriptor afd=getAssets().openFd("nature/"+NATURE_FILES[index])){
+                AudioAttributes attrs=new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build();
+                m=new MediaPlayer();m.setAudioAttributes(attrs);
+                m.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
+                m.setLooping(false);m.prepare();
+                final MediaPlayer player=m;
+                final long start=SystemClock.uptimeMillis();
+                final long duration=Math.max(800,Math.min(8500,player.getDuration()));
+                final float volume=setting/100f;
+                player.setVolume(0f,0f);weatherSound=player;
+                player.setOnCompletionListener(mp->{if(weatherSound==mp)weatherSound=null;try{mp.release();}catch(Exception ignored){}});
+                player.setOnErrorListener((mp,what,extra)->{
+                    if(weatherSound==mp)weatherSound=null;
+                    try{mp.release();}catch(Exception ignored){}
+                    soundStatus("Nature recording playback failed");return true;
+                });
+                player.start();
+                ui.post(new Runnable(){
+                    @Override public void run(){
+                        if(request!=audioSerial.get()||weatherSound!=player||!appForeground)return;
+                        long elapsed=SystemClock.uptimeMillis()-start;
+                        if(elapsed>=duration){stopWeatherAudioOnUi();return;}
+                        float envelope=Math.min(1f,elapsed/260f)*Math.min(1f,(duration-elapsed)/850f);
+                        try{player.setVolume(volume*envelope,volume*envelope);}
+                        catch(Exception ex){stopWeatherAudioOnUi();return;}
+                        ui.postDelayed(this,75);
                     }
-                    MediaPlayer m=new MediaPlayer();m.setAudioAttributes(attr);m.setDataSource(local.getAbsolutePath());
-                    m.setLooping(false);m.prepare();weatherSound=m;
-                    // Low levels and no periodic play. Storm has natural distant thunder, no jump scare.
-                    float volume=index==3?.085f:index==2?.12f:index==1?.075f:.105f;
-                    m.setVolume(volume,volume);
-                    m.setOnCompletionListener(mp->{if(weatherSound==mp){weatherSound=null;abandonSoundFocus();}mp.release();});
-                    m.setOnErrorListener((mp,what,extra)->{if(weatherSound==mp){weatherSound=null;abandonSoundFocus();}mp.release();soundStatus("Nature recording failed to play");return true;});
-                    m.start();soundStatus("Now playing: "+NATURE_KEYS[index]+" (natural recording)");
-                    ui.postDelayed(()->{if(weatherSound==m){stopWeatherAudioOnUi();}},index==3?15000:10500);
-                }catch(Exception ex){soundStatus("Unable to play this nature recording");abandonSoundFocus();}
-            });
-        },"GlassNature-"+kind).start();
+                });
+                soundStatus("Playing "+kind+" · "+setting+"%");
+            }catch(Exception ex){
+                if(m!=null&&weatherSound!=m)try{m.release();}catch(Exception ignored){}
+                soundStatus("Unable to play "+kind+" sound");
+            }
+        });
     }
     void setWeatherFx(boolean state){prefs().edit().putBoolean("weather_fx",state).apply();remoteUpdated();}
     void setTmdbToken(String token){
@@ -640,6 +634,9 @@ public class MainActivity extends Activity {
         @JavascriptInterface public boolean getSoundFx(){return MainActivity.this.getSoundFx();}
         @JavascriptInterface public void setSoundFx(boolean on){MainActivity.this.setSoundFx(on);}
         @JavascriptInterface public void playWeatherAudio(String kind){MainActivity.this.playWeatherAudio(kind);}
+        @JavascriptInterface public int getNatureVolume(String key){return MainActivity.this.getNatureVolume(key);}
+        @JavascriptInterface public void setNatureVolume(String key,int volume){MainActivity.this.setNatureVolume(key,volume);}
+        @JavascriptInterface public String traktClientId(){return trakt.getPublicClientId();}
         @JavascriptInterface public void setWeatherFx(boolean on){MainActivity.this.setWeatherFx(on);}
         @JavascriptInterface public String getDisplayCards(){return cardState().toString();}
         @JavascriptInterface public void setCardVisible(String key, boolean visible){MainActivity.this.setCardVisible(key,visible);}
@@ -840,6 +837,7 @@ public class MainActivity extends Activity {
 
     @Override protected void onResume(){
         super.onResume();
+        appForeground=true;
         if(companion==null||!companion.running()){
             companion=new CompanionServer(this);
             companion.start();
@@ -848,6 +846,7 @@ public class MainActivity extends Activity {
         notifyHomeLauncherState();
     }
     @Override protected void onPause(){
+        appForeground=false;
         // Paired LAN control is only reachable while Glass ONN is the foreground app.
         if(companion!=null)companion.stop();
         stopWeatherAudio();
