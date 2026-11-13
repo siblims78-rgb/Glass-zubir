@@ -13,7 +13,7 @@
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent>
     </queries>
-    <application android:label="Glass ONN v0.6.5" android:icon="@drawable/appicon" android:banner="@drawable/banner" android:allowBackup="false" android:usesCleartextTraffic="false" android:theme="@android:style/Theme.Material.NoActionBar" android:supportsRtl="true">
+    <application android:label="${glassOnnAppLabel}" android:icon="@drawable/appicon" android:banner="@drawable/banner" android:allowBackup="false" android:usesCleartextTraffic="false" android:theme="@android:style/Theme.Material.NoActionBar" android:supportsRtl="true">
         <activity android:name="com.glassonn.home.MainActivity" android:exported="true" android:screenOrientation="landscape">
            <intent-filter>
              <action android:name="android.intent.action.MAIN"/>

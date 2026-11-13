@@ -9,6 +9,8 @@ android {
         targetSdk 34
         versionCode 26
         versionName '0.7.0'
+        // Keep Android installer label in sync with the release version.
+        manifestPlaceholders = [glassOnnAppLabel: "Glass ONN v${versionName}"]
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -39,7 +41,7 @@ tasks.register('bundleZenNature') {
                 try {
                     con = (java.net.HttpURLConnection)new java.net.URL(location).openConnection()
                     con.setConnectTimeout(20000); con.setReadTimeout(25000)
-                    con.setRequestProperty('User-Agent','GlassONN-AndroidTV/0.6.5 (nature ambience; Wikimedia Commons attribution included)')
+                    con.setRequestProperty('User-Agent','GlassONN-AndroidTV/0.7.0 (nature ambience; Wikimedia Commons attribution included)')
                     if(con.getResponseCode() != 200)throw new IOException('HTTP '+con.getResponseCode())
                     int count=0
                     con.getInputStream().withCloseable { input ->
