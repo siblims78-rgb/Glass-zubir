@@ -1578,6 +1578,10 @@ function buildClockOptions(){const area=$('clockStyleEditor');if(!area)return;ar
 
 function init(){
  initCinematicUI();initHomeShelfViewport();
+ try{
+  const saved=JSON.parse(localStorage.getItem('glassonn_focus_memory_v070')||'null');
+  if(saved&&['shelf','dock'].includes(saved.area))focusMemory.lastHome=saved;
+ }catch(e){}
  fromNative();applyTheme();applyClockStyle();try{recentPicks=JSON.parse(localStorage.getItem('glassonn_recent_picks')||'[]').slice(0,4);}catch(e){recentPicks=[];}try{nextPlayList=JSON.parse(localStorage.getItem('glassonn_nextplay')||'[]').slice(0,8);}catch(e){nextPlayList=[];}applyCards();applyGlass();applyLayout();applyWallpaperMode();updatePlaceUI();clockTick();setInterval(clockTick,1000);
  fetchApps();refreshAll();setInterval(refreshIfDue,60000);
  setInterval(nextScene,30000);setInterval(weatherFxTick,6000);refreshTrendingFeeds();
@@ -1718,6 +1722,81 @@ function revealHomeShelf(row){
  const y=row.getBoundingClientRect().top-v.getBoundingClientRect().top+v.scrollTop;
  v.scrollTo({top:Math.max(0,y-3),behavior:'smooth'});
 }
+
+// v0.7.0 Focus Engine: stable keys + per-row remembered selection.
+// Avoid retaining secrets or playback history; only local UI coordinates/IDs are stored.
+const focusMemory={
+ rowKey:new Map(),lastHome:null,lastNav:'railHome',origin:null,originKey:null,originNav:null
+};
+function focusDescriptor(el){
+ if(!el||!el.closest)return null;
+ const row=el.closest('.traktHome,.recentHome,.trendShelf');
+ if(row&&el.matches('.homeTrendCard,.traktCard,.homeSetup')){
+  const items=homeShelfItems(row),index=items.indexOf(el);
+  return {area:'shelf',row:row.id,key:String(el.dataset.focusKey||''),index:Math.max(0,index)};
+ }
+ if(el.closest('#ui>.apps')&&el.matches('.app')){
+  const items=[...document.querySelectorAll('#ui>.apps .app')];
+  return {area:'dock',key:String(el.dataset.pkg||''),index:Math.max(0,items.indexOf(el))};
+ }
+ if(el.closest('#cinemaRail')&&el.classList.contains('railBtn'))return {area:'nav',key:el.id};
+ return null;
+}
+function resolveFocusDescriptor(info){
+ if(!info)return null;
+ if(info.area==='nav')return document.getElementById(info.key);
+ if(info.area==='dock'){
+  const items=[...document.querySelectorAll('#ui>.apps .app')].filter(x=>x.getClientRects().length>0);
+  return items.find(x=>x.dataset.pkg===info.key)||items[Math.min(info.index||0,items.length-1)]||null;
+ }
+ if(info.area==='shelf'){
+  const row=document.getElementById(info.row);if(!row||row.getClientRects().length===0)return null;
+  const items=homeShelfItems(row),saved=focusMemory.rowKey.get(info.row)||info.key;
+  return items.find(x=>String(x.dataset.focusKey||'')===saved)||items[Math.min(info.index||0,items.length-1)]||null;
+ }
+ return null;
+}
+function focusSafe(el,reveal=true){
+ if(!el||!el.isConnected||el.disabled||!el.getClientRects().length)return false;
+ try{el.focus({preventScroll:true});}catch(e){el.focus();}
+ if(reveal){
+  const row=el.closest('.traktHome,.recentHome,.trendShelf');
+  if(row)revealHomeShelf(row);
+  else if(el.closest('#ui>.apps'))el.scrollIntoView({inline:'nearest',block:'nearest'});
+ }
+ return true;
+}
+function rowRememberedTarget(row){
+ if(!row)return null;
+ const items=homeShelfItems(row);
+ return items.find(x=>x.dataset.focusKey===focusMemory.rowKey.get(row.id))||items[0]||null;
+}
+function rememberOverlayOrigin(){
+ const el=document.activeElement,info=focusDescriptor(el);
+ if(info){focusMemory.origin=el;focusMemory.originKey=info;focusMemory.originNav=info.area==='nav'?info.key:null;}
+ else {focusMemory.origin=null;focusMemory.originKey=focusMemory.lastHome;focusMemory.originNav=focusMemory.lastNav;}
+}
+function restoreHomeFocus(){
+ const focus=focusMemory.originKey||focusMemory.lastHome;
+ const target=(focusMemory.origin?.isConnected?focusMemory.origin:null)||resolveFocusDescriptor(focus)||
+   resolveFocusDescriptor(focusMemory.lastHome)||$(focusMemory.originNav||focusMemory.lastNav)||$('railHome');
+ focusMemory.origin=null;focusMemory.originKey=null;focusMemory.originNav=null;
+ return focusSafe(target)||focusSafe($('railHome'),false);
+}
+function refreshFocusedHomeAfterRender(info){
+ if(!info||openDialog())return;
+ const target=resolveFocusDescriptor(info);
+ if(target)focusSafe(target);
+}
+document.addEventListener('focusin',e=>{
+ const info=focusDescriptor(e.target);
+ if(!info)return;
+ if(info.area==='nav'){focusMemory.lastNav=info.key;return;}
+ focusMemory.lastHome=info;
+ if(info.area==='shelf')focusMemory.rowKey.set(info.row,info.key);
+ try{localStorage.setItem('glassonn_focus_memory_v070',JSON.stringify(info));}catch(err){}
+});
+
 function navigateHomeShelf(key,current){
  const v=$('homeShelfViewport'),dock=document.querySelector('#ui>.apps');
  if(!v||!current)return false;
@@ -1729,12 +1808,12 @@ function navigateHomeShelf(key,current){
   if(key==='ArrowLeft'||key==='ArrowRight'){
    const next=cards[index+(key==='ArrowRight'?1:-1)];
    if(next){next.focus({preventScroll:true});return true;}
-   if(key==='ArrowLeft'){$('railHome').focus({preventScroll:true});return true;}
+   if(key==='ArrowLeft'){focusSafe($(focusMemory.lastNav||'railHome'),false);return true;}
    return true;
   }
   if(key==='ArrowUp'&&lastVisible){
-   const items=homeShelfItems(lastVisible);if(items[0]){items[0].focus({preventScroll:true});revealHomeShelf(lastVisible);}
-   return true;
+   const preferred=focusMemory.lastHome?.area==='shelf'?resolveFocusDescriptor(focusMemory.lastHome):null;
+   focusSafe(preferred||rowRememberedTarget(lastVisible));return true;
   }
   return key==='ArrowDown';
  }
@@ -1744,23 +1823,25 @@ function navigateHomeShelf(key,current){
  if(key==='ArrowUp'||key==='ArrowDown'){
   const next=rows[index+(key==='ArrowUp'?-1:1)];
   if(!next){
-   if(key==='ArrowUp'){$('railHome').focus({preventScroll:true});v.scrollTo({top:0,behavior:'smooth'});}
-   else{const app=dock?.querySelector('.app');app?.focus({preventScroll:true});}
+   if(key==='ArrowUp'){focusSafe($(focusMemory.lastNav||'railHome'),false);v.scrollTo({top:0,behavior:'smooth'});}
+   else{const remembered=focusMemory.lastHome?.area==='dock'?resolveFocusDescriptor(focusMemory.lastHome):null;
+    focusSafe(remembered||dock?.querySelector('.app'));}
    return true;
   }
   const currentBox=current.getBoundingClientRect(),cx=(currentBox.left+currentBox.right)/2;
-  const options=homeShelfItems(next);let best=null,distance=Infinity;
+  const options=homeShelfItems(next);let best=rowRememberedTarget(next),distance=Infinity;
+  if(best){focusSafe(best);return true;}
   for(const el of options){
    const b=el.getBoundingClientRect(),d=Math.abs((b.left+b.right)/2-cx);
    if(d<distance){distance=d;best=el;}
   }
-  if(best){best.focus({preventScroll:true});revealHomeShelf(next);}
+  if(best)focusSafe(best);
   return true;
  }
  if(key==='ArrowLeft'||key==='ArrowRight'){
   const cards=homeShelfItems(row),at=cards.indexOf(current),next=cards[at+(key==='ArrowRight'?1:-1)];
-  if(next&&at>=0){next.focus({preventScroll:true});next.scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'});return true;}
-  if(key==='ArrowLeft'&&at<=0){$('railHome').focus({preventScroll:true});return true;}
+  if(next&&at>=0){focusSafe(next);return true;}
+  if(key==='ArrowLeft'&&at<=0){focusSafe($(focusMemory.lastNav||'railHome'),false);return true;}
   return true;
  }
  return false;
@@ -2156,12 +2237,12 @@ function updateSettingsLanguage(){
  switchSettingsTab(activeSettingsTab);
 }
 window.showSettings=function(){
- hideOverlay();setAeroNav('railSettings');$('settings').classList.add('open');buildThemePicker();buildClockOptions();buildPlaces();buildGallery();buildSources();buildCardOptions();buildLayouts();buildWidgetEditor();buildRecoSources();updateAppNamesUI();updateFxUI();updateCompanionInfo();if($('netflixStatus'))$('netflixStatus').textContent=bridge()&&Native.hasTmdb&&Native.hasTmdb()?t('TMDB bersambung. Cadangan Netflix MY tersedia jika API merespons.','TMDB connected. Netflix MY picks load when API responds.'):t('TMDB belum disambung.','TMDB not connected.');applyLanguage();
+ rememberOverlayOrigin();hideOverlay(false);setAeroNav('railSettings');$('settings').classList.add('open');buildThemePicker();buildClockOptions();buildPlaces();buildGallery();buildSources();buildCardOptions();buildLayouts();buildWidgetEditor();buildRecoSources();updateAppNamesUI();updateFxUI();updateCompanionInfo();if($('netflixStatus'))$('netflixStatus').textContent=bridge()&&Native.hasTmdb&&Native.hasTmdb()?t('TMDB bersambung. Cadangan Netflix MY tersedia jika API merespons.','TMDB connected. Netflix MY picks load when API responds.'):t('TMDB belum disambung.','TMDB not connected.');applyLanguage();
  updateSettingsLanguage();switchSettingsTab('appearance');document.querySelector('#settings [data-settings-tab="appearance"]')?.focus();
 };
 window.showTraktSettings=function(){showSettings();switchSettingsTab('integrations');$('traktStartButton')?.focus();};
 window.showNetflixSettings=function(){showSettings();switchSettingsTab('integrations');$('tmdbTokenInput')?.focus();};
-window.hideSettings=function(){$('settings').classList.remove('open');setAeroNav('railHome');$('railHome')?.focus({preventScroll:true});};
+window.hideSettings=function(restore=true){const open=$('settings').classList.contains('open');$('settings').classList.remove('open');if(restore&&open){setAeroNav('railHome');restoreHomeFocus();}};
 function buildPlaces(){const el=$('placeButtons');el.innerHTML='';LOCATIONS.forEach((p,i)=>{let b=document.createElement('button');b.className='place '+(i===place?'active':'');b.textContent=p[0]+' · '+p[1];b.onclick=()=>changePlace(i);el.appendChild(b);});}
 window.changePlace=function(i){tomorrowPrayerDate='';tomorrowFajrSeconds=null;tomorrowUnavailableDate='';lastTomorrowRequest='';prayerScheduleDate='';prayerSchedule=[];updatePrayerCountdown(new Date());place=i;if(bridge())Native.setPlace(String(i));updatePlaceUI();buildPlaces();refreshAll();document.querySelector('#placeButtons .active')?.focus();};
 function updatePlaceUI(){if($('placeTitle'))$('placeTitle').textContent=LOCATIONS[place][0];if($('zone'))$('zone').textContent=LOCATIONS[place][1];}
@@ -2489,6 +2570,7 @@ function setAppFocusGlow(button,app){
  if(img.complete&&img.naturalWidth)sample();else img.addEventListener('load',sample,{once:true});
 }
 function renderDock(){
+ const focusedBefore=focusDescriptor(document.activeElement);
  const deck=$('dock');deck.innerHTML='';
  const byPkg=new Map(allApps.map(a=>[a.pkg,a]));let sorted=favorites.map(p=>byPkg.get(p)).filter(Boolean);
  if(!sorted.length&&!bridge())sorted=allApps.filter(a=>!hiddenApps.includes(a.pkg)).slice(0,8);
@@ -2497,6 +2579,7 @@ function renderDock(){
   b.appendChild(makeAppMedia(app));const nm=document.createElement('span');nm.className='appname';nm.textContent=app.name;b.appendChild(nm);setAppFocusGlow(b,app);
   b.dataset.pkg=app.pkg;b.onclick=()=>{if(bridge())Native.openApp(app.pkg);else toast('APK: '+app.name);};b.oncontextmenu=e=>{e.preventDefault();showAppMenu(app.pkg);};deck.appendChild(b);
  }
+ if(focusedBefore?.area==='dock')refreshFocusedHomeAfterRender(focusedBefore);
 }
 let selectedAppPkg='',appMenuReturnFocus=null,holdTimeout=null,holdTriggered=false,holdApp=null;
 window.showAppMenu=function(pkg){const app=allApps.find(a=>a.pkg===pkg);if(!app)return;
@@ -2531,7 +2614,7 @@ window.tvSelectUp=function(){
  if(!fired&&el&&el.isConnected){el.focus();el.click();}
 };
 window.tvShowFocusedMenu=function(){const pkg=holdTarget();if(pkg)showAppMenu(pkg);};
-window.showAllApps=function(){hideSettings();setAeroNav('railApps');$('allApps').classList.add('open');renderAllApps();document.querySelector('#allApps .allAppCard')?.focus()||$('hiddenFilterBtn').focus();};
+window.showAllApps=function(){rememberOverlayOrigin();hideSettings(false);setAeroNav('railApps');$('allApps').classList.add('open');renderAllApps();document.querySelector('#allApps .allAppCard')?.focus()||$('hiddenFilterBtn').focus();};
 window.toggleHiddenFilter=function(){showHiddenApps=!showHiddenApps;renderAllApps();$('hiddenFilterBtn').focus();};
 function renderAllApps(){const grid=$('allAppsGrid');grid.innerHTML='';
  $('hiddenFilterBtn').textContent=showHiddenApps?'◉ Sembunyi hidden':'◉ Tunjuk hidden';
@@ -2587,6 +2670,7 @@ function cinematicTile(item,i,recent=false){
  return b;
 }
 function refreshHomeTrending(){
+ const focusedBefore=focusDescriptor(document.activeElement);
  const alternate=cinemetaChart.length?cinemetaChart:(tmdbChart.length?tmdbChart:[...movieChart,...showChart]);
  trendingItems=recoSource==='trakt'?(traktChart.length?traktChart:alternate):
   recoSource==='cinemeta'?(cinemetaChart.length?cinemetaChart:(tmdbChart.length?tmdbChart:[...movieChart,...showChart])):
@@ -2603,6 +2687,7 @@ function refreshHomeTrending(){
   entries.forEach((item,i)=>strip.appendChild(cinematicTile(item,i,false)));
  }
  if($('trending').classList.contains('open'))renderTrending();
+ if(focusedBefore?.area==='shelf')refreshFocusedHomeAfterRender(focusedBefore);
 }
 
 let selectedTrend=null;let detailFetchTimer=null;
@@ -2654,13 +2739,13 @@ window.openTrend=function(item){
 };
 window.playSelectedTrend=function(){if(selectedTrend)openTrend(selectedTrend);};
 window.openBrowseItem=function(item){
- hideSettings();$('trending').classList.add('open');
+ rememberOverlayOrigin();hideSettings(false);setAeroNav('railExplore');$('trending').classList.add('open');
  if(!trendingItems.length)refreshTrendingFeeds();
  renderTrending();
  const match=[...document.querySelectorAll('#trending .trendingCard')].find(b=>b.dataset.trendKey===trendKey(item));
  if(match){match.focus();match.scrollIntoView({block:'nearest'});}else document.querySelector('#trending .trendingCard')?.focus();
 };
-window.showTrending=function(filter){if(filter==='Filem'||filter==='Siri')trendFilter=filter;else trendFilter='all';hideSettings();setAeroNav('railExplore');$('trending').classList.add('open');
+window.showTrending=function(filter){rememberOverlayOrigin();if(filter==='Filem'||filter==='Siri')trendFilter=filter;else trendFilter='all';hideSettings(false);setAeroNav('railExplore');$('trending').classList.add('open');
  if(!trendingItems.length)refreshTrendingFeeds();
  renderTrending();document.querySelector('#trending .trendingCard')?.focus()||document.querySelector('#trending .button')?.focus();
 };
@@ -2715,7 +2800,11 @@ function renderTrending(){const grid=$('trendingGrid');grid.innerHTML='';
  }
  showTrendDetails((selectedTrend&&filtered.find(x=>trendKey(x)===trendKey(selectedTrend)))||filtered[0]);
 }
-window.hideOverlay=function(){$('allApps').classList.remove('open');$('trending').classList.remove('open');stopMovieBackdrop(true);setAeroNav('railHome');$('railHome')?.focus({preventScroll:true});};
+window.hideOverlay=function(restore=true){
+ const wasOpen=$('allApps').classList.contains('open')||$('trending').classList.contains('open');
+ $('allApps').classList.remove('open');$('trending').classList.remove('open');stopMovieBackdrop(true);
+ if(restore&&wasOpen){setAeroNav('railHome');restoreHomeFocus();}
+};
 window.handleBack=function(){
  if($('appMenu').classList.contains('open')){closeAppMenu();return;}
  if($('allApps').classList.contains('open')||$('trending').classList.contains('open')){hideOverlay();return;}
@@ -2757,10 +2846,9 @@ function moveFocus(key){
    next?.focus({preventScroll:true});return;
   }
   if(key==='ArrowDown'){
-   const first=homeShelfRows()[0];const el=first&&homeShelfItems(first)[0];
-   if(el){el.focus({preventScroll:true});revealHomeShelf(first);}
-   else document.querySelector('#ui>.apps .app')?.focus({preventScroll:true});
-   return;
+   const remembered=resolveFocusDescriptor(focusMemory.lastHome);
+   const first=homeShelfRows()[0],el=remembered||(first&&rowRememberedTarget(first))||document.querySelector('#ui>.apps .app');
+   focusSafe(el);return;
   }
   return;
  }
