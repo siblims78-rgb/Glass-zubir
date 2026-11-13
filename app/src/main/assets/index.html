@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ms"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
-<title>Glass ONN v0.6.8 · Clean Cinematic</title>
+<title>Glass ONN v0.6.9 · Aero Home</title>
 <style>
 :root{color-scheme:dark;--glass:rgba(11,24,37,.40);--border:rgba(235,248,255,.25);--ink:#f4fbff;--muted:#b7c6db;--accent:#9deafd;--radius:24px}
 *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#0b1429;font-family:Arial,"Noto Sans",sans-serif;color:var(--ink)}
@@ -1027,14 +1027,12 @@ html[data-panels-transparent="true"] #ui #homeShelfStack .homeTrendMeta *{
 
 </style></head><body>
 <div class="wallpaper" id="w1"></div><div class="wallpaper" id="w2" style="opacity:0"></div><div class="wallpaper" id="w3" style="opacity:0"></div><div class="wallpaper" id="w4" style="opacity:0"></div><div class="wallpaper" id="customImage" style="opacity:0"></div><div class="wallpaper" id="onlineWallpaper" style="opacity:0"></div><div class="wallpaper" id="focusBackdrop" aria-hidden="true"></div><div id="shade"></div>
-<nav id="cinemaRail" aria-label="Quick navigation menu">
-<button id="railToggle" type="button" class="railToggle" aria-label="Open quick menu" title="Quick menu" aria-controls="railActions" aria-expanded="false" onclick="toggleFloatingMenu()">☷</button>
-<div id="railActions" hidden>
-<button class="railBtn" id="railHome" onclick="railHome()"><span>⌂</span><small>Home</small></button>
-<button class="railBtn" id="railExplore" onclick="closeFloatingMenu();showBrowseSearch()"><span>⌕</span><small>Search</small></button>
-<button class="railBtn" id="railApps" onclick="closeFloatingMenu();showAllApps()"><span>▦</span><small>All Apps</small></button>
-<button class="railBtn" id="railSettings" onclick="closeFloatingMenu();showSettings()"><span>⚙</span><small>Settings</small></button>
-</div></nav><div id="weatherFX" aria-hidden="true"><canvas id="weatherCanvas"></canvas></div>
+<nav id="cinemaRail" aria-label="Main navigation">
+<button class="railBtn selected" id="railHome" onclick="railHome()">Home</button>
+<button class="railBtn" id="railApps" onclick="showAllApps()">Apps</button>
+<button class="railBtn" id="railExplore" onclick="showTrending()">Discover</button>
+<button class="railBtn" id="railSettings" onclick="showSettings()">Settings</button>
+</nav><div id="weatherFX" aria-hidden="true"><canvas id="weatherCanvas"></canvas></div>
 <div id="ui">
  <div class="header"><div class="brand">GLASS <span>ONN</span></div></div>
  <div class="hero">
@@ -1053,7 +1051,7 @@ html[data-panels-transparent="true"] #ui #homeShelfStack .homeTrendMeta *{
 </div>
 <div id="settings" role="dialog" aria-modal="true" aria-label="Glass ONN Settings"><div class="modal settingsShell">
 <aside class="settingsSidebar" aria-label="Settings navigation">
-  <div class="settingsBrand"><span class="settingsBrandMark">G</span><span>GLASS <b>ONN</b><small>SETTINGS · v0.6.8</small></span></div>
+  <div class="settingsBrand"><span class="settingsBrandMark">G</span><span>GLASS <b>ONN</b><small>SETTINGS · v0.6.9</small></span></div>
   <div class="settingsNav">
     <button class="settingsNavItem active" data-settings-tab="appearance" onclick="switchSettingsTab('appearance')"><span class="navGlyph">◈</span><span data-en="Appearance" data-ms="Penampilan">Appearance</span></button>
     <button class="settingsNavItem" data-settings-tab="home" onclick="switchSettingsTab('home')"><span class="navGlyph">⌂</span><span data-en="Home Screen" data-ms="Skrin Utama">Home Screen</span></button>
@@ -1090,7 +1088,7 @@ html[data-panels-transparent="true"] #ui #homeShelfStack .homeTrendMeta *{
     <div class="settingsGroup"><h3>Phone Companion</h3><p class="settingsHint" data-en="Scan with your phone camera to open Companion. Connect phone and TV to the same Wi-Fi." data-ms="Imbas dengan kamera telefon untuk buka Companion. Telefon dan TV mesti pada Wi-Fi yang sama.">Scan with your phone camera to open Companion. Connect phone and TV to the same Wi-Fi.</p><div class="companionPairRow"><div class="companionQrFrame"><canvas id="companionQr" width="220" height="220" role="img" aria-label="Companion connection QR code" hidden></canvas><div id="companionQrEmpty">Waiting for local address</div></div><div class="companionPairDetails"><p class="settingsStatus" id="companionUrl">Checking local address…</p><p class="companionPairPin" id="companionPin">Pairing PIN: —</p><p class="settingsHint" data-en="Scan QR → open Companion → enter PIN from this TV. No account required." data-ms="Imbas QR → buka Companion → masukkan PIN dari TV ini. Tak perlu akaun.">Scan QR → open Companion → enter PIN from this TV. No account required.</p><button class="button" onclick="updateCompanionInfo()" data-en="↻ Refresh QR" data-ms="↻ Muat semula QR">↻ Refresh QR</button></div></div><p class="settingsHint" data-en="Use a trusted home network. Local Companion uses HTTP, so never enter private credentials through it." data-ms="Gunakan rangkaian rumah dipercayai. Companion menggunakan HTTP setempat, jadi jangan masukkan maklumat rahsia melaluinya.">Use a trusted home network. Local Companion uses HTTP, so never enter private credentials through it.</p></div>
   </section>
   <section class="settingsPage" data-settings-page="about">
-    <div class="settingsGroup"><h3>Glass ONN Launcher</h3><p class="settingsHint">Version 0.6.8 · Clean Cinematic Preview</p><p class="settingsHint">Weather from Open-Meteo · Prayer times from solat.my · Film metadata from selected catalogues.</p></div>
+    <div class="settingsGroup"><h3>Glass ONN Launcher</h3><p class="settingsHint">Version 0.6.9 · Aero Home Preview</p><p class="settingsHint">Weather from Open-Meteo · Prayer times from solat.my · Film metadata from selected catalogues.</p></div>
     <div class="settingsGroup"><h3>Nature Audio Credits</h3><p class="settingsHint">Birds forest · barracuda1983 · public domain · Wikimedia Commons.</p><p class="settingsHint">Water drops dripping · ZooFari · CC BY-SA 3.0 · Wikimedia Commons. Used without modification.</p><p class="settingsHint">https://commons.wikimedia.org/wiki/File:Birds_forest.ogg<br>https://commons.wikimedia.org/wiki/File:Water_drops_dripping.ogg</p><p class="settingsHint">https://creativecommons.org/licenses/by-sa/3.0/</p></div>
     <div class="settingsGroup"><h3>Privacy</h3><p class="settingsHint">Trakt and TMDB credentials stay on the Android device. No GPS or Accessibility permissions are requested. Projectivy can remain as backup launcher.</p></div>
   </section>
@@ -1256,7 +1254,7 @@ function init(){
  setInterval(nextScene,30000);setInterval(weatherFxTick,6000);refreshTrendingFeeds();
  if(source==='commons')fetchOnlinePhotos();
  loadTraktState();renderTraktShelf();fetchNetflixPicks();setInterval(()=>{if(traktConnected&&!document.hidden&&Date.now()-traktRefreshAt>600000)refreshTrakt();},60000);
- $('railToggle').focus();applyLanguage();observeLanguage();renderNetflixShelf();
+ $('railHome').focus();applyLanguage();observeLanguage();renderNetflixShelf();
 }
 
 // v0.6.0: Read-only opt-in Trakt playback; tokens never reach the WebView.
@@ -1344,32 +1342,28 @@ function renderTraktShelf(){
  });
 }
 
-window.toggleFloatingMenu=function(force){
- const nav=$('cinemaRail'),actions=$('railActions'),toggle=$('railToggle');if(!nav||!actions||!toggle)return;
- const open=typeof force==='boolean'?force:actions.hidden;
- actions.hidden=!open;nav.classList.toggle('expanded',open);toggle.setAttribute('aria-expanded',String(open));
- toggle.setAttribute('aria-label',open?'Close quick menu':'Open quick menu');
- if(open)$('railHome')?.focus({preventScroll:true});else toggle.focus({preventScroll:true});
-};
-window.closeFloatingMenu=function(){toggleFloatingMenu(false);};
+window.closeFloatingMenu=function(){};
 window.railHome=function(){
  for(const id of ['settings','allApps','trending','appMenu'])$(id)?.classList.remove('open');
- stopMovieBackdrop(true);$('homeShelfViewport')?.scrollTo({top:0,behavior:'smooth'});closeFloatingMenu();
+ stopMovieBackdrop(true);$('homeShelfViewport')?.scrollTo({top:0,behavior:'smooth'});
+ document.querySelector('#ui .hero')?.classList.remove('scrolled');$('railHome')?.focus({preventScroll:true});
 };
 
 function initHomeShelfViewport(){
  const ui=$('ui'),trending=$('trendingHome'),apps=ui?.querySelector('.apps');
  if(!ui||!trending||!apps||$('homeShelfViewport'))return;
  const v=document.createElement('div');v.id='homeShelfViewport';
- v.setAttribute('role','region');v.setAttribute('aria-label','Scrollable Apps, Continue Watching and Trending');
+ v.setAttribute('role','region');v.setAttribute('aria-label','Scrollable movie and show rows');
  const stack=document.createElement('div');stack.id='homeShelfStack';v.appendChild(stack);
- ui.insertBefore(v,ui.querySelector('.footer'));stack.append(trending,apps);
- // The next shelf remains visible; no text prompt needed.
- v.addEventListener('scroll',()=>ui.classList.toggle('shelves-scrolled',v.scrollTop>20),{passive:true});
+ ui.insertBefore(v,ui.querySelector('.footer'));stack.append(trending);
+ // Keep an always-accessible app dock, below the scrollable movie shelf.
+ ui.insertBefore(apps,ui.querySelector('.footer'));
+ for(const element of [trending,apps,...ui.querySelectorAll('.hero .glass')])element.classList.remove('glass');
+ v.addEventListener('scroll',()=>ui.classList.toggle('shelves-scrolled',v.scrollTop>28),{passive:true});
 }
 function homeShelfRows(){
  const v=$('homeShelfViewport');if(!v)return [];
- return [...v.querySelectorAll('.apps,.traktHome,.recentHome,.trendShelf')]
+ return [...v.querySelectorAll('.traktHome,.recentHome,.trendShelf')]
   .filter(row=>row.getClientRects().length>0&&getComputedStyle(row).display!=='none')
   .sort((a,b)=>a.getBoundingClientRect().top-b.getBoundingClientRect().top);
 }
@@ -1384,32 +1378,62 @@ function revealHomeShelf(row){
  v.scrollTo({top:Math.max(0,y-3),behavior:'smooth'});
 }
 function navigateHomeShelf(key,current){
- const v=$('homeShelfViewport');if(!v||!v.contains(current))return false;
- const row=current.closest('.apps,.traktHome,.recentHome,.trendShelf');if(!row)return false;
- const rows=homeShelfRows(),i=rows.indexOf(row);if(i<0)return false;
+ const v=$('homeShelfViewport'),dock=document.querySelector('#ui>.apps');
+ if(!v||!current)return false;
+ const inDock=!!dock?.contains(current),inShelf=v.contains(current);
+ if(!inDock&&!inShelf)return false;
+ const firstVisible=homeShelfRows()[0],lastVisible=homeShelfRows().at(-1);
+ if(inDock){
+  const cards=[...dock.querySelectorAll('.app')].filter(el=>el.getClientRects().length>0),index=cards.indexOf(current);
+  if(key==='ArrowLeft'||key==='ArrowRight'){
+   const next=cards[index+(key==='ArrowRight'?1:-1)];
+   if(next){next.focus({preventScroll:true});return true;}
+   if(key==='ArrowLeft'){$('railHome').focus({preventScroll:true});return true;}
+   return true;
+  }
+  if(key==='ArrowUp'&&lastVisible){
+   const items=homeShelfItems(lastVisible);if(items[0]){items[0].focus({preventScroll:true});revealHomeShelf(lastVisible);}
+   return true;
+  }
+  return key==='ArrowDown';
+ }
+ const row=current.closest('.traktHome,.recentHome,.trendShelf');
+ if(!row)return false;
+ const rows=homeShelfRows(),index=rows.indexOf(row);if(index<0)return false;
  if(key==='ArrowUp'||key==='ArrowDown'){
-  const next=rows[i+(key==='ArrowUp'?-1:1)];
-  if(!next){if(key==='ArrowUp'){$('railToggle')?.focus();v.scrollTo({top:0,behavior:'smooth'});}return true;}
-  const options=homeShelfItems(next);if(!options.length)return true;
-  const box=current.getBoundingClientRect(),x=(box.left+box.right)/2;
-  let closest=options[0],distance=Infinity;
-  for(const item of options){const r=item.getBoundingClientRect(),d=Math.abs((r.left+r.right)/2-x);if(d<distance){closest=item;distance=d;}}
-  closest.focus({preventScroll:true});revealHomeShelf(next);return true;
+  const next=rows[index+(key==='ArrowUp'?-1:1)];
+  if(!next){
+   if(key==='ArrowUp'){$('railHome').focus({preventScroll:true});v.scrollTo({top:0,behavior:'smooth'});}
+   else{const app=dock?.querySelector('.app');app?.focus({preventScroll:true});}
+   return true;
+  }
+  const currentBox=current.getBoundingClientRect(),cx=(currentBox.left+currentBox.right)/2;
+  const options=homeShelfItems(next);let best=null,distance=Infinity;
+  for(const el of options){
+   const b=el.getBoundingClientRect(),d=Math.abs((b.left+b.right)/2-cx);
+   if(d<distance){distance=d;best=el;}
+  }
+  if(best){best.focus({preventScroll:true});revealHomeShelf(next);}
+  return true;
  }
  if(key==='ArrowLeft'||key==='ArrowRight'){
-  const options=homeShelfItems(row),index=options.indexOf(current),step=key==='ArrowRight'?1:-1;
-  if(index>=0&&options[index+step]){
-   const next=options[index+step];next.focus({preventScroll:true});next.scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'});return true;
-  }
-  if(key==='ArrowLeft'&&index<=0){$('railToggle')?.focus();return true;}
+  const cards=homeShelfItems(row),at=cards.indexOf(current),next=cards[at+(key==='ArrowRight'?1:-1)];
+  if(next&&at>=0){next.focus({preventScroll:true});next.scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'});return true;}
+  if(key==='ArrowLeft'&&at<=0){$('railHome').focus({preventScroll:true});return true;}
+  return true;
  }
  return false;
 }
 
 function initCinematicUI(){
- const clock=document.querySelector('#ui .hero .clockpanel'),weather=clock?.querySelector('.weatherrow');
- if(!clock||!weather)return;clock.classList.add('combinedClockWeather');
+ const hero=document.querySelector('#ui .hero'),clock=hero?.querySelector('.clockpanel');
+ const weather=clock?.querySelector('.weatherrow'),date=clock?.querySelector('#date');
+ const time=clock?.querySelector('#clock');
+ if(!clock||!weather)return;
+ clock.classList.add('combinedClockWeather','aeroClock');
+ if(date&&time)time.parentNode?.insertBefore(date,time);
  const fxButtons=weather.querySelector('.fxTestRow');if(fxButtons)fxButtons.hidden=true;
+ const prayer=hero?.querySelector('.rightpanel');prayer?.classList.add('aeroPrayer');
 }
 function malaysiaDay(d=new Date()) {return d.toLocaleDateString('en-CA',{timeZone:'Asia/Kuala_Lumpur'});}
 function nextMalaysiaDay(day){const dt=new Date(day+'T12:00:00+08:00');return new Date(dt.getTime()+86400000).toLocaleDateString('en-CA',{timeZone:'Asia/Kuala_Lumpur'});}
@@ -1767,7 +1791,7 @@ window.showSettings=function(){
 };
 window.showTraktSettings=function(){showSettings();switchSettingsTab('integrations');$('traktStartButton')?.focus();};
 window.showNetflixSettings=function(){showSettings();switchSettingsTab('integrations');$('tmdbTokenInput')?.focus();};
-window.hideSettings=function(){$('settings').classList.remove('open');$('railToggle')?.focus();};
+window.hideSettings=function(){$('settings').classList.remove('open');$('railSettings')?.focus({preventScroll:true});};
 function buildPlaces(){const el=$('placeButtons');el.innerHTML='';LOCATIONS.forEach((p,i)=>{let b=document.createElement('button');b.className='place '+(i===place?'active':'');b.textContent=p[0]+' · '+p[1];b.onclick=()=>changePlace(i);el.appendChild(b);});}
 window.changePlace=function(i){tomorrowPrayerDate='';tomorrowFajrSeconds=null;tomorrowUnavailableDate='';lastTomorrowRequest='';prayerScheduleDate='';prayerSchedule=[];updatePrayerCountdown(new Date());place=i;if(bridge())Native.setPlace(String(i));updatePlaceUI();buildPlaces();refreshAll();document.querySelector('#placeButtons .active')?.focus();};
 function updatePlaceUI(){if($('placeTitle'))$('placeTitle').textContent=LOCATIONS[place][0];if($('zone'))$('zone').textContent=LOCATIONS[place][1];}
@@ -2320,11 +2344,10 @@ function renderTrending(){const grid=$('trendingGrid');grid.innerHTML='';
  }
  showTrendDetails((selectedTrend&&filtered.find(x=>trendKey(x)===trendKey(selectedTrend)))||filtered[0]);
 }
-window.hideOverlay=function(){$('allApps').classList.remove('open');$('trending').classList.remove('open');stopMovieBackdrop(true);$('railToggle')?.focus();};
+window.hideOverlay=function(){$('allApps').classList.remove('open');$('trending').classList.remove('open');stopMovieBackdrop(true);$('railExplore')?.focus({preventScroll:true});};
 window.handleBack=function(){
  if($('appMenu').classList.contains('open')){closeAppMenu();return;}
  if($('allApps').classList.contains('open')||$('trending').classList.contains('open')){hideOverlay();return;}
- if(!$('settings').classList.contains('open')&&!$('railActions').hidden){closeFloatingMenu();return;}
  if($('settings').classList.contains('open')){
   if(document.activeElement?.closest?.('#settings .settingsPage')){settingsNavActive()?.focus();return;}
   hideSettings();
@@ -2356,7 +2379,20 @@ function visibleFocusable(){
 }
 function moveFocus(key){
  if($('settings').classList.contains('open')){settingsMoveFocus(key);return;}
- if(document.activeElement?.id==='railToggle'&&(key==='ArrowRight'||key==='ArrowDown')){toggleFloatingMenu(true);return;}
+ if(document.activeElement?.closest?.('#cinemaRail')&&['ArrowLeft','ArrowRight','ArrowDown','ArrowUp'].includes(key)){
+  const items=[...document.querySelectorAll('#cinemaRail .railBtn')],index=items.indexOf(document.activeElement);
+  if(key==='ArrowLeft'||key==='ArrowRight'){
+   const next=items[(index+(key==='ArrowRight'?1:-1)+items.length)%items.length];
+   next?.focus({preventScroll:true});return;
+  }
+  if(key==='ArrowDown'){
+   const first=homeShelfRows()[0];const el=first&&homeShelfItems(first)[0];
+   if(el){el.focus({preventScroll:true});revealHomeShelf(first);}
+   else document.querySelector('#ui>.apps .app')?.focus({preventScroll:true});
+   return;
+  }
+  return;
+ }
  if(!$('trending').classList.contains('open')&&!$('allApps').classList.contains('open')&&!$('appMenu').classList.contains('open')&&navigateHomeShelf(key,document.activeElement))return;
  const nodes=visibleFocusable(),cur=document.activeElement;
  if($('trending').classList.contains('open')){
