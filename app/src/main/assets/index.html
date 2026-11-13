@@ -1252,6 +1252,20 @@ html[data-theme="glass"][data-panels-transparent] body #ui>.apps{
 @media(prefers-reduced-motion:reduce){
  html[data-theme][data-panels-transparent] body #cinemaRail .railBtn{transition:none!important}
 }
+html[data-theme][data-panels-transparent] body #ui #homeShelfViewport{
+ top:var(--aero-shelf-top,63.5vh)!important;
+ height:var(--aero-shelf-height,22vh)!important}
+html[data-theme][data-panels-transparent] body #ui>.apps{
+ height:var(--aero-dock-height,10.7vh)!important}
+html[data-theme][data-panels-transparent] body #ui .clockpanel.aeroClock .time{
+ transform:scale(var(--aero-clock-scale,1))!important;transform-origin:center!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .homeTrendCard:focus,
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .traktCard:focus{
+ outline:2px solid #ecf3ff!important;outline-offset:2px!important;
+ box-shadow:0 0 0 1px var(--home-panel-stroke)!important;transform:none!important}
+html[data-theme][data-panels-transparent] body #ui.shelves-scrolled>.hero{opacity:0!important}
+html[data-theme][data-panels-transparent] body #ui #rowOrderBtn,
+html[data-theme][data-panels-transparent] body #ui #swapInfoBtn{display:none!important}
 
 </style></head><body>
 <div class="wallpaper" id="w1"></div><div class="wallpaper" id="w2" style="opacity:0"></div><div class="wallpaper" id="w3" style="opacity:0"></div><div class="wallpaper" id="w4" style="opacity:0"></div><div class="wallpaper" id="customImage" style="opacity:0"></div><div class="wallpaper" id="onlineWallpaper" style="opacity:0"></div><div class="wallpaper" id="focusBackdrop" aria-hidden="true"></div><div id="shade"></div>
@@ -1442,7 +1456,7 @@ function fromNative(){
 }
 const CLOCK_OPTIONS={
  font:[['Modern','Arial, sans-serif'],['Classic','Georgia, serif'],['Digital','monospace'],['Elegant','Trebuchet MS, sans-serif']],
- size:[['Small','clamp(44px,5vw,92px)'],['Normal','clamp(54px,6.2vw,126px)'],['Large','clamp(65px,7.2vw,146px)'],['XL','clamp(76px,8vw,164px)']],
+ size:[['Small','clamp(62px,5.4vw,108px)'],['Normal','clamp(85px,8vw,156px)'],['Large','clamp(98px,9vw,185px)'],['XL','clamp(108px,10.5vw,210px)']],
  color:[['White','#ffffff'],['Warm','#fff1d1'],['Ice','#bceeff'],['Mint','#c5ffe0']],
  glow:[['Soft','soft'],['Glow','glow'],['Off','off']]
 };
@@ -1544,7 +1558,7 @@ window.onTraktEvent=function(type,raw){
 };
 function renderTraktShelf(){
  const home=$('traktHome'),rail=$('traktScroller');if(!home||!rail)return;
- home.hidden=false;rail.replaceChildren();const action=$('traktHomeAction');if(action){action.textContent=traktConnected?t('↻ Segarkan','↻ Refresh'):t('Sambung Trakt','Connect Trakt');action.onclick=traktConnected?refreshTrakt:showTraktSettings;}
+ home.hidden=!(traktConnected&&traktItems.length);rail.replaceChildren();const action=$('traktHomeAction');if(action){action.textContent=traktConnected?t('↻ Segarkan','↻ Refresh'):t('Sambung Trakt','Connect Trakt');action.onclick=traktConnected?refreshTrakt:showTraktSettings;}
  if(!traktConnected){const b=document.createElement('button');b.className='homeSetup';b.textContent=t('Sambungkan akaun Trakt kepada Glass ONN. Sambungan Stremio sahaja tidak mencukupi.','Authorize Trakt separately in Glass ONN. Being linked in Stremio does not connect this app.');b.onclick=showTraktSettings;rail.appendChild(b);return;}
  if(!traktItems.length){const empty=document.createElement('span');empty.className='homeLoading';empty.textContent=t('Tiada playback Trakt aktif. Semak sync Stremio dan tekan Segarkan.','No active Trakt playback. Check Stremio scrobbling, then refresh.');rail.appendChild(empty);return;}
  traktItems.forEach(item=>{
@@ -1571,10 +1585,16 @@ function renderTraktShelf(){
 }
 
 window.closeFloatingMenu=function(){};
+function setAeroNav(active){
+ for(const b of document.querySelectorAll('#cinemaRail .railBtn')){
+  b.classList.toggle('selected',b.id===active);
+  if(b.id===active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+ }
+}
 window.railHome=function(){
  for(const id of ['settings','allApps','trending','appMenu'])$(id)?.classList.remove('open');
  stopMovieBackdrop(true);$('homeShelfViewport')?.scrollTo({top:0,behavior:'smooth'});
- document.querySelector('#ui .hero')?.classList.remove('scrolled');$('railHome')?.focus({preventScroll:true});
+ document.querySelector('#ui .hero')?.classList.remove('scrolled');setAeroNav('railHome');$('railHome')?.focus({preventScroll:true});
 };
 
 function initHomeShelfViewport(){
@@ -1846,8 +1866,16 @@ function applyLayout(){
  let sum=raw.reduce((a,b)=>a+b,0),n=raw.map(v=>v*80/sum);
  if(n[0]<22){const rest=n[1]+n[2];n[0]=22;n[1]=n[1]/rest*58;n[2]=58-n[1];}
  for(const [i,key] of ['hero','trend','apps'].entries())ui.style.setProperty('--'+key+'-size',n[i].toFixed(2)+'vh');
- if($('rowOrderBtn'))$('rowOrderBtn').textContent='Susunan: '+(appsFirst?'Apps kemudian Filem':'Filem kemudian Apps');
- if($('swapInfoBtn'))$('swapInfoBtn').textContent='⇄ Jam '+(swapInfo?'kanan':'kiri')+' • Solat '+(swapInfo?'kiri':'kanan');
+ // Aero keeps the Apps dock visible and changes the browsing row density.
+ const density={balanced:[10.7,22],movies:[9.1,24],apps:[12,20],compact:[8.8,20.5]}[layoutMode]||[10.7,22];
+ const dockHeight=Math.max(8,Math.min(13.5,density[0]+(widgetSize.apps||0)*.65));
+ const shelfHeight=Math.max(18,Math.min(25.5,density[1]+(widgetSize.trending||0)*.7));
+ ui.style.setProperty('--aero-dock-height',dockHeight+'vh');
+ ui.style.setProperty('--aero-shelf-height',shelfHeight+'vh');
+ ui.style.setProperty('--aero-shelf-top',(86-shelfHeight)+'vh');
+ ui.style.setProperty('--aero-clock-scale',String(1+(widgetSize.info||0)*.045));
+ if($('rowOrderBtn')){$('rowOrderBtn').textContent='Apps dock kekal di bawah • browse baris di atas';$('rowOrderBtn').disabled=true;}
+ if($('swapInfoBtn')){$('swapInfoBtn').textContent='Solat ringkas di bawah jam (Aero)';$('swapInfoBtn').disabled=true;}
 }
 function buildWidgetEditor(){const el=$('widgetEditor');if(!el)return;el.innerHTML='';
  for(const [key,label] of [['info','Jam & Solat'],['trending','Filem / Siri'],['apps','Aplikasi']]){
@@ -2014,12 +2042,12 @@ function updateSettingsLanguage(){
  switchSettingsTab(activeSettingsTab);
 }
 window.showSettings=function(){
- hideOverlay();$('settings').classList.add('open');buildThemePicker();buildClockOptions();buildPlaces();buildGallery();buildSources();buildCardOptions();buildLayouts();buildWidgetEditor();buildRecoSources();updateAppNamesUI();updateFxUI();updateCompanionInfo();if($('netflixStatus'))$('netflixStatus').textContent=bridge()&&Native.hasTmdb&&Native.hasTmdb()?t('TMDB bersambung. Cadangan Netflix MY tersedia jika API merespons.','TMDB connected. Netflix MY picks load when API responds.'):t('TMDB belum disambung.','TMDB not connected.');applyLanguage();
+ hideOverlay();setAeroNav('railSettings');$('settings').classList.add('open');buildThemePicker();buildClockOptions();buildPlaces();buildGallery();buildSources();buildCardOptions();buildLayouts();buildWidgetEditor();buildRecoSources();updateAppNamesUI();updateFxUI();updateCompanionInfo();if($('netflixStatus'))$('netflixStatus').textContent=bridge()&&Native.hasTmdb&&Native.hasTmdb()?t('TMDB bersambung. Cadangan Netflix MY tersedia jika API merespons.','TMDB connected. Netflix MY picks load when API responds.'):t('TMDB belum disambung.','TMDB not connected.');applyLanguage();
  updateSettingsLanguage();switchSettingsTab('appearance');document.querySelector('#settings [data-settings-tab="appearance"]')?.focus();
 };
 window.showTraktSettings=function(){showSettings();switchSettingsTab('integrations');$('traktStartButton')?.focus();};
 window.showNetflixSettings=function(){showSettings();switchSettingsTab('integrations');$('tmdbTokenInput')?.focus();};
-window.hideSettings=function(){$('settings').classList.remove('open');$('railSettings')?.focus({preventScroll:true});};
+window.hideSettings=function(){$('settings').classList.remove('open');setAeroNav('railHome');$('railHome')?.focus({preventScroll:true});};
 function buildPlaces(){const el=$('placeButtons');el.innerHTML='';LOCATIONS.forEach((p,i)=>{let b=document.createElement('button');b.className='place '+(i===place?'active':'');b.textContent=p[0]+' · '+p[1];b.onclick=()=>changePlace(i);el.appendChild(b);});}
 window.changePlace=function(i){tomorrowPrayerDate='';tomorrowFajrSeconds=null;tomorrowUnavailableDate='';lastTomorrowRequest='';prayerScheduleDate='';prayerSchedule=[];updatePrayerCountdown(new Date());place=i;if(bridge())Native.setPlace(String(i));updatePlaceUI();buildPlaces();refreshAll();document.querySelector('#placeButtons .active')?.focus();};
 function updatePlaceUI(){if($('placeTitle'))$('placeTitle').textContent=LOCATIONS[place][0];if($('zone'))$('zone').textContent=LOCATIONS[place][1];}
@@ -2389,7 +2417,7 @@ window.tvSelectUp=function(){
  if(!fired&&el&&el.isConnected){el.focus();el.click();}
 };
 window.tvShowFocusedMenu=function(){const pkg=holdTarget();if(pkg)showAppMenu(pkg);};
-window.showAllApps=function(){hideSettings();$('allApps').classList.add('open');renderAllApps();document.querySelector('#allApps .allAppCard')?.focus()||$('hiddenFilterBtn').focus();};
+window.showAllApps=function(){hideSettings();setAeroNav('railApps');$('allApps').classList.add('open');renderAllApps();document.querySelector('#allApps .allAppCard')?.focus()||$('hiddenFilterBtn').focus();};
 window.toggleHiddenFilter=function(){showHiddenApps=!showHiddenApps;renderAllApps();$('hiddenFilterBtn').focus();};
 function renderAllApps(){const grid=$('allAppsGrid');grid.innerHTML='';
  $('hiddenFilterBtn').textContent=showHiddenApps?'◉ Sembunyi hidden':'◉ Tunjuk hidden';
@@ -2517,7 +2545,7 @@ window.openBrowseItem=function(item){
  const match=[...document.querySelectorAll('#trending .trendingCard')].find(b=>b.dataset.trendKey===trendKey(item));
  if(match){match.focus();match.scrollIntoView({block:'nearest'});}else document.querySelector('#trending .trendingCard')?.focus();
 };
-window.showTrending=function(filter){if(filter==='Filem'||filter==='Siri')trendFilter=filter;else trendFilter='all';hideSettings();$('trending').classList.add('open');
+window.showTrending=function(filter){if(filter==='Filem'||filter==='Siri')trendFilter=filter;else trendFilter='all';hideSettings();setAeroNav('railExplore');$('trending').classList.add('open');
  if(!trendingItems.length)refreshTrendingFeeds();
  renderTrending();document.querySelector('#trending .trendingCard')?.focus()||document.querySelector('#trending .button')?.focus();
 };
@@ -2572,7 +2600,7 @@ function renderTrending(){const grid=$('trendingGrid');grid.innerHTML='';
  }
  showTrendDetails((selectedTrend&&filtered.find(x=>trendKey(x)===trendKey(selectedTrend)))||filtered[0]);
 }
-window.hideOverlay=function(){$('allApps').classList.remove('open');$('trending').classList.remove('open');stopMovieBackdrop(true);$('railExplore')?.focus({preventScroll:true});};
+window.hideOverlay=function(){$('allApps').classList.remove('open');$('trending').classList.remove('open');stopMovieBackdrop(true);setAeroNav('railHome');$('railHome')?.focus({preventScroll:true});};
 window.handleBack=function(){
  if($('appMenu').classList.contains('open')){closeAppMenu();return;}
  if($('allApps').classList.contains('open')||$('trending').classList.contains('open')){hideOverlay();return;}
