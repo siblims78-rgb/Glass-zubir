@@ -1267,6 +1267,23 @@ html[data-theme][data-panels-transparent] body #ui.shelves-scrolled>.hero{opacit
 html[data-theme][data-panels-transparent] body #ui #rowOrderBtn,
 html[data-theme][data-panels-transparent] body #ui #swapInfoBtn{display:none!important}
 
+
+/* v0.6.9 matte artwork placeholders honor the same theme opacity as banners. */
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .homeTrendArtwork,
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .homeTrendArtwork.placeholder,
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .traktArt{
+ background:var(--home-card-bg,transparent)!important;background-image:none!important;
+ border:0!important;box-shadow:none!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .homeTrendArtwork img,
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .traktArt img{
+ background:transparent!important}
+html[data-theme][data-panels-transparent] body #settings #rowOrderBtn,
+html[data-theme][data-panels-transparent] body #settings #swapInfoBtn{display:none!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .traktProgress{
+ background:rgba(255,255,255,.15)!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .traktProgress span{
+ background:var(--t-focus,#f0f4fc)!important}
+
 </style></head><body>
 <div class="wallpaper" id="w1"></div><div class="wallpaper" id="w2" style="opacity:0"></div><div class="wallpaper" id="w3" style="opacity:0"></div><div class="wallpaper" id="w4" style="opacity:0"></div><div class="wallpaper" id="customImage" style="opacity:0"></div><div class="wallpaper" id="onlineWallpaper" style="opacity:0"></div><div class="wallpaper" id="focusBackdrop" aria-hidden="true"></div><div id="shade"></div>
 <nav id="cinemaRail" aria-label="Main navigation">
