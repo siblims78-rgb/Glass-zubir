@@ -1025,6 +1025,234 @@ html[data-panels-transparent="true"] #ui #homeShelfStack .homeTrendMeta *{
 }
 @media(prefers-reduced-motion:reduce){#cinemaRail #railToggle,#cinemaRail #railActions{transition:none!important}}
 
+
+/* v0.6.9 Aero: one coherent home layout. The six theme palettes remain distinct. */
+html[data-theme][data-panels-transparent] body #cinemaRail{
+ position:fixed!important;z-index:35!important;top:1.7vh!important;left:28vw!important;
+ right:25vw!important;bottom:auto!important;width:47vw!important;height:clamp(42px,5.8vh,65px)!important;
+ min-width:0!important;max-width:none!important;padding:3px!important;margin:0!important;
+ display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;
+ gap:clamp(7px,1.1vw,24px)!important;overflow:visible!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html[data-theme][data-panels-transparent] body #cinemaRail .railBtn{
+ position:relative!important;flex:none!important;display:flex!important;align-items:center!important;
+ justify-content:center!important;width:auto!important;min-width:clamp(62px,6.2vw,122px)!important;
+ height:clamp(33px,4.3vh,54px)!important;padding:5px clamp(10px,1.2vw,22px)!important;
+ border:1px solid transparent!important;border-radius:50px!important;
+ background:transparent!important;color:#f5f5f6!important;
+ font:500 clamp(12px,.9vw,17px) Arial,sans-serif!important;
+ text-shadow:0 1px 5px rgba(0,0,0,.8)!important;
+ outline:0!important;box-shadow:none!important;transform:none!important;
+ transition:background .18s ease,outline .18s ease,transform .18s ease}
+html[data-theme][data-panels-transparent] body #cinemaRail .railBtn.selected,
+html[data-theme][data-panels-transparent] body #cinemaRail .railBtn:focus{
+ background:rgba(17,23,33,.5)!important;color:#fff!important;
+ border:1px solid rgba(235,243,255,.18)!important;outline:2px solid rgba(242,246,254,.96)!important;
+ box-shadow:none!important;transform:scale(1.025)!important}
+html[data-theme][data-panels-transparent] body #cinemaRail #railSettings{
+ position:fixed!important;top:1.9vh!important;right:3vw!important;left:auto!important;
+ min-width:clamp(66px,7vw,125px)!important}
+html[data-theme][data-panels-transparent] body #ui>.header,
+html[data-theme][data-panels-transparent] body #ui.shelves-scrolled>.header{
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;
+ position:fixed!important;top:2.3vh!important;left:clamp(24px,3.7vw,78px)!important;
+ width:22vw!important;height:4vh!important;min-height:0!important;
+ opacity:.90!important;transform:none!important;pointer-events:none!important;z-index:30!important}
+html[data-theme][data-panels-transparent] body #ui>.header .brand{
+ font:650 clamp(12px,1.15vw,22px) Arial,sans-serif!important;
+ color:#f1f4f7!important;text-shadow:0 2px 8px #000b!important;letter-spacing:.12em!important}
+html[data-theme][data-panels-transparent] body #ui>.header .brand span{font-size:inherit!important;color:#eef2f6!important}
+html[data-theme][data-panels-transparent] body #ui>.hero,
+html[data-theme][data-panels-transparent] body #ui.layout-balanced>.hero,
+html[data-theme][data-panels-transparent] body #ui.layout-movies>.hero,
+html[data-theme][data-panels-transparent] body #ui.layout-apps>.hero,
+html[data-theme][data-panels-transparent] body #ui.layout-compact>.hero{
+ position:fixed!important;top:17vh!important;left:4vw!important;right:4vw!important;bottom:auto!important;
+ width:92vw!important;height:39vh!important;min-height:0!important;max-height:39vh!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+ gap:clamp(2px,1.1vh,11px)!important;z-index:3!important;pointer-events:none!important}
+html[data-theme][data-panels-transparent] body #ui>.hero .clockpanel,
+html[data-theme][data-panels-transparent] body #ui>.hero .rightpanel{
+ position:relative!important;display:flex!important;flex:0 0 auto!important;
+ width:auto!important;min-width:0!important;max-width:90vw!important;
+ height:auto!important;min-height:0!important;max-height:none!important;
+ align-items:center!important;justify-content:center!important;flex-direction:column!important;
+ gap:0!important;margin:0!important;padding:0!important;
+ background:transparent!important;background-image:none!important;
+ border:0!important;border-radius:0!important;
+ box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+ color:#f8f8fc!important;text-align:center!important}
+html[data-theme][data-panels-transparent] body #ui .clockpanel.aeroClock>div:first-child{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ flex-direction:column!important;gap:0!important}
+html[data-theme][data-panels-transparent] body #ui .clockpanel.aeroClock .eyebrow{display:none!important}
+html[data-theme][data-panels-transparent] body #ui .clockpanel.aeroClock .date{
+ order:0!important;font-size:clamp(12px,1vw,18px)!important;
+ color:#eff2f8!important;text-shadow:0 1px 7px #000c!important;letter-spacing:.015em!important;
+ margin:0 0 .7vh!important;line-height:1.1!important}
+html[data-theme][data-panels-transparent] body #ui .clockpanel.aeroClock .time{
+ order:1!important;display:block!important;
+ font-family:var(--clock-font,Arial,sans-serif)!important;
+ font-size:var(--clock-size,clamp(85px,7.9vw,168px))!important;
+ font-weight:300!important;line-height:1.02!important;letter-spacing:-.045em!important;
+ color:var(--clock-color,#fff)!important;text-shadow:var(--clock-shadow,0 2px 12px #0007)!important}
+html[data-theme][data-panels-transparent] body #ui .clockpanel.aeroClock .weatherrow{
+ display:flex!important;flex:0 0 auto!important;align-items:center!important;justify-content:center!important;
+ flex-direction:row!important;gap:clamp(5px,.65vw,13px)!important;
+ margin:1vh 0 0!important;padding:0!important;border:0!important;height:auto!important;
+ max-width:none!important;width:auto!important}
+html[data-theme][data-panels-transparent] body #ui .clockpanel.aeroClock .weatherrow>div{
+ display:flex!important;flex:0 0 auto!important;align-items:center!important;justify-content:center!important;
+ flex-direction:row!important;gap:7px!important;min-width:0!important}
+html[data-theme][data-panels-transparent] body #ui .clockpanel.aeroClock .weatherrow .temp{
+ font:500 clamp(12px,1.1vw,21px) Arial,sans-serif!important;color:#f8fafd!important;
+ text-shadow:0 2px 6px #000b!important}
+html[data-theme][data-panels-transparent] body #ui .clockpanel.aeroClock .weatherrow #weatherIcon{
+ font-size:clamp(13px,1.35vw,24px)!important;line-height:1!important}
+html[data-theme][data-panels-transparent] body #ui .clockpanel.aeroClock .weatherrow #weatherLabel{
+ font-size:clamp(11px,.9vw,17px)!important;color:#e7eff5!important;text-shadow:0 2px 6px #000b!important}
+html[data-theme][data-panels-transparent] body #ui .clockpanel.aeroClock .weatherrow .fxTestRow{display:none!important}
+html[data-theme][data-panels-transparent] body #ui>.hero .rightpanel.aeroPrayer{padding:0!important}
+html[data-theme][data-panels-transparent] body #ui>.hero .rightpanel.aeroPrayer .paneltitle{
+ display:flex!important;align-items:center!important;justify-content:center!important;gap:0!important}
+html[data-theme][data-panels-transparent] body #ui>.hero .rightpanel.aeroPrayer .paneltitle h2,
+html[data-theme][data-panels-transparent] body #ui>.hero .rightpanel.aeroPrayer .badge,
+html[data-theme][data-panels-transparent] body #ui>.hero .rightpanel.aeroPrayer .prayers,
+html[data-theme][data-panels-transparent] body #ui>.hero .rightpanel.aeroPrayer #prayerStatus{display:none!important}
+html[data-theme][data-panels-transparent] body #ui>.hero .rightpanel.aeroPrayer .prayerCountdown{
+ display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;
+ gap:9px!important;min-width:0!important;max-width:100%!important;white-space:normal!important}
+html[data-theme][data-panels-transparent] body #ui>.hero .rightpanel.aeroPrayer .prayerNextName,
+html[data-theme][data-panels-transparent] body #ui>.hero .rightpanel.aeroPrayer .prayerTimer{
+ font:400 clamp(10px,.83vw,16px) Arial,sans-serif!important;color:#e7eef7!important;
+ text-shadow:0 2px 6px #000b!important;letter-spacing:0!important;white-space:nowrap!important}
+html[data-theme][data-panels-transparent] body #ui>.hero .rightpanel.aeroPrayer .prayerTimer{
+ font-weight:650!important;font-variant-numeric:tabular-nums!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfViewport{
+ position:fixed!important;top:63.5vh!important;bottom:14.5vh!important;
+ left:clamp(27px,4.3vw,85px)!important;right:4vw!important;
+ width:auto!important;height:22vh!important;
+ overflow-x:hidden!important;overflow-y:auto!important;
+ mask-image:linear-gradient(to bottom,#000 0%,#000 90%,transparent 100%)!important;
+ background:transparent!important;z-index:4!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack{
+ display:flex!important;flex-direction:column!important;gap:clamp(13px,1.7vh,20px)!important;
+ min-height:0!important;height:auto!important;padding:0 1vw 6vh 0!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack>.trendingHome{
+ display:flex!important;flex-direction:column!important;gap:clamp(13px,1.7vh,20px)!important;
+ order:0!important;overflow:visible!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:0!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .trendShelf,
+html[data-theme][data-panels-transparent] body #ui.layout-balanced #homeShelfStack .trendShelf,
+html[data-theme][data-panels-transparent] body #ui.layout-movies #homeShelfStack .trendShelf,
+html[data-theme][data-panels-transparent] body #ui.layout-apps #homeShelfStack .trendShelf,
+html[data-theme][data-panels-transparent] body #ui.layout-compact #homeShelfStack .trendShelf{
+ height:clamp(154px,21vh,280px)!important;min-height:154px!important;max-height:22vh!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .traktHome,
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .recentHome:not([hidden]){
+ height:clamp(154px,21vh,280px)!important;min-height:154px!important;max-height:22vh!important;
+ background:transparent!important;border:0!important;box-shadow:none!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .homeTrendHeader{
+ color:#fff!important;text-shadow:0 2px 9px #000c!important;font-size:clamp(13px,1.1vw,20px)!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .homeTrendHeader small{display:none!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .homeTrendMore,
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .homeSetup{
+ background:var(--home-card-bg)!important;color:var(--home-meta-ink)!important;
+ border:1px solid var(--home-panel-stroke)!important;box-shadow:none!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .homeTrendCard,
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .traktCard,
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .homeTrendCard .homeTrendMeta{
+ background:var(--home-card-bg)!important;background-image:none!important;
+ color:var(--home-meta-ink)!important;border-color:var(--home-panel-stroke)!important;
+ box-shadow:var(--home-panel-shadow)!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .homeTrendCard{
+ flex-basis:clamp(210px,21vw,400px)!important;min-width:0!important;
+ height:100%!important;display:flex!important;flex-direction:column!important;
+ padding:0!important;gap:0!important;border:1px solid var(--home-panel-stroke)!important;border-radius:12px!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .homeTrendCard .homeTrendArtwork{
+ height:69%!important;flex:0 0 69%!important;width:100%!important;
+ border-radius:11px 11px 0 0!important;overflow:hidden!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .homeTrendCard .homeTrendMeta{
+ display:flex!important;flex:1!important;justify-content:center!important;
+ min-height:0!important;padding:5px 10px!important;border:0!important;border-radius:0 0 11px 11px!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .homeTrendMeta strong{
+ white-space:nowrap!important;text-overflow:ellipsis!important;overflow:hidden!important;
+ color:var(--home-meta-ink)!important}
+html[data-theme][data-panels-transparent] body #ui #homeShelfStack .homeTrendMeta span{
+ color:var(--home-meta-ink)!important;opacity:.8!important}
+html[data-theme][data-panels-transparent] body #ui>.apps{
+ position:fixed!important;z-index:6!important;top:auto!important;
+ bottom:clamp(10px,2.1vh,27px)!important;left:10vw!important;right:10vw!important;
+ width:80vw!important;height:clamp(73px,10.7vh,128px)!important;
+ min-height:0!important;max-height:11vh!important;flex:none!important;
+ display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;
+ padding:clamp(5px,.7vh,10px) clamp(8px,1vw,19px)!important;margin:0!important;
+ gap:0!important;border:1px solid var(--home-panel-stroke)!important;
+ border-radius:20px!important;background:var(--home-panel-bg)!important;background-image:none!important;
+ backdrop-filter:var(--home-panel-blur)!important;-webkit-backdrop-filter:var(--home-panel-blur)!important;
+ box-shadow:var(--home-panel-shadow)!important}
+html[data-theme][data-panels-transparent] body #ui>.apps .appsheader{display:none!important}
+html[data-theme][data-panels-transparent] body #ui>.apps .dock{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ height:100%!important;width:100%!important;gap:clamp(4px,.65vw,15px)!important;
+ flex:1!important;overflow-x:auto!important;overflow-y:hidden!important;padding:0!important;margin:0!important;
+ background:transparent!important;box-shadow:none!important}
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .app{
+ flex:1 1 0!important;min-width:clamp(52px,5vw,88px)!important;
+ max-width:clamp(75px,8vw,152px)!important;height:100%!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;
+ margin:0!important;padding:4px!important;gap:2px!important;border:1px solid transparent!important;
+ border-radius:14px!important;background:transparent!important;background-image:none!important;
+ box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .app:focus{
+ background:rgba(180,192,207,.18)!important;outline:2px solid #f3f6fc!important;outline-offset:1px!important;
+ box-shadow:none!important;transform:scale(1.04)!important}
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .app .appMedia{
+ width:100%!important;height:90%!important;min-height:0!important;
+ display:flex!important;justify-content:center!important;align-items:center!important;
+ background:transparent!important;background-image:none!important;
+ border:0!important;box-shadow:none!important;filter:none!important}
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .app:focus .appMedia,
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .appMedia.appFallback{
+ background:transparent!important;box-shadow:none!important;border:0!important;filter:none!important}
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .app img{
+ width:100%!important;height:100%!important;max-width:100%!important;
+ max-height:100%!important;object-fit:contain!important;border-radius:10px!important}
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .appname{display:none!important}
+html[data-theme][data-panels-transparent] body #ui.showAppTitles>.apps .dock .appname{
+ display:block!important;color:#fff!important;text-shadow:0 1px 4px #000!important}
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .app .iconFallback{color:#fff!important}
+html[data-theme][data-panels-transparent] body #ui.shelves-scrolled>.hero{
+ opacity:0!important;pointer-events:none!important;transform:translateY(-20px)!important}
+html[data-theme][data-panels-transparent] body #shade{
+ background:linear-gradient(to top,rgba(0,3,10,.96) 0%,rgba(0,4,12,.86) 17%,rgba(0,5,14,.58) 30%,rgba(0,3,10,.08) 53%,transparent 82%)!important}
+html[data-theme][data-panels-transparent] body #ui.hideFavorites>.apps{display:none!important}
+html[data-theme][data-panels-transparent] body #ui.hideFavorites #homeShelfViewport{
+ bottom:2vh!important;height:32vh!important}
+html[data-theme][data-panels-transparent] body #ui.hideTrending #homeShelfViewport{display:none!important}
+html[data-theme][data-panels-transparent] body #ui.hidePrayer>.hero .rightpanel{display:none!important}
+html[data-theme][data-panels-transparent] body #ui.hideWeather>.hero .weatherrow{display:none!important}
+/* Non-Glass palettes are always matte, with no frosted tint or green edge. */
+html[data-theme]:not([data-theme="glass"])[data-panels-transparent] body #ui>.apps,
+html[data-theme]:not([data-theme="glass"])[data-panels-transparent] body #ui #homeShelfStack .homeTrendCard,
+html[data-theme]:not([data-theme="glass"])[data-panels-transparent] body #ui #homeShelfStack .traktCard{
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+ border-color:var(--home-panel-stroke)!important;box-shadow:var(--home-panel-shadow)!important}
+html[data-theme="glass"][data-panels-transparent] body #ui>.apps{
+ backdrop-filter:var(--home-panel-blur)!important;-webkit-backdrop-filter:var(--home-panel-blur)!important}
+@media(max-height:610px){
+ html[data-theme][data-panels-transparent] body #ui>.hero{top:12vh!important;height:42vh!important}
+ html[data-theme][data-panels-transparent] body #ui>.apps{height:12vh!important;max-height:12vh!important}
+ html[data-theme][data-panels-transparent] body #ui #homeShelfViewport{top:61vh!important;height:24vh!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-theme][data-panels-transparent] body #cinemaRail .railBtn{transition:none!important}
+}
+
 </style></head><body>
 <div class="wallpaper" id="w1"></div><div class="wallpaper" id="w2" style="opacity:0"></div><div class="wallpaper" id="w3" style="opacity:0"></div><div class="wallpaper" id="w4" style="opacity:0"></div><div class="wallpaper" id="customImage" style="opacity:0"></div><div class="wallpaper" id="onlineWallpaper" style="opacity:0"></div><div class="wallpaper" id="focusBackdrop" aria-hidden="true"></div><div id="shade"></div>
 <nav id="cinemaRail" aria-label="Main navigation">
