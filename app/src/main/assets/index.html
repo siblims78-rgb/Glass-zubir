@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ms"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
-<title>Glass ONN v0.7.0 · Aero Interactive</title>
+<title>Glass ONN v0.7.1 · Home Launcher Selection</title>
 <style>
 :root{color-scheme:dark;--glass:rgba(11,24,37,.40);--border:rgba(235,248,255,.25);--ink:#f4fbff;--muted:#b7c6db;--accent:#9deafd;--radius:24px}
 *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#0b1429;font-family:Arial,"Noto Sans",sans-serif;color:var(--ink)}
@@ -1423,7 +1423,7 @@ html[data-theme][data-panels-transparent] body #ui>.apps .dock .app:focus .iconF
 </div>
 <div id="settings" role="dialog" aria-modal="true" aria-label="Glass ONN Settings"><div class="modal settingsShell">
 <aside class="settingsSidebar" aria-label="Settings navigation">
-  <div class="settingsBrand"><span class="settingsBrandMark">G</span><span>GLASS <b>ONN</b><small>SETTINGS · v0.7.0</small></span></div>
+  <div class="settingsBrand"><span class="settingsBrandMark">G</span><span>GLASS <b>ONN</b><small>SETTINGS · v0.7.1</small></span></div>
   <div class="settingsNav">
     <button class="settingsNavItem active" data-settings-tab="appearance" onclick="switchSettingsTab('appearance')"><span class="navGlyph">◈</span><span data-en="Appearance" data-ms="Penampilan">Appearance</span></button>
     <button class="settingsNavItem" data-settings-tab="home" onclick="switchSettingsTab('home')"><span class="navGlyph">⌂</span><span data-en="Home Screen" data-ms="Skrin Utama">Home Screen</span></button>
@@ -1444,6 +1444,16 @@ html[data-theme][data-panels-transparent] body #ui>.apps .dock .app:focus .iconF
     <div class="settingsGroup"><h3 data-en="Home Panel Opacity" data-ms="Kelegapan Panel Home">Home Panel Opacity</h3><p class="settingsHint">0% means fully transparent Home panels, 100% fully opaque. Blur applies to Glass only.</p><div class="glassControls"><label>Home panel opacity <strong id="glassOpacityValue">50%</strong><input tabindex="0" type="range" id="glassOpacityRange" min="0" max="100" step="1" value="50" oninput="setGlassOpacity(this.value)"><span class="rangeButtons"><button class="stepButton" onclick="adjustGlass('opacity',-2)">−</button><button class="stepButton" onclick="adjustGlass('opacity',2)">+</button></span></label><label>Blur <strong id="glassBlurValue">0px</strong><input tabindex="0" type="range" id="glassBlurRange" min="0" max="18" step="1" value="0" oninput="setGlassBlur(this.value)"><span class="rangeButtons"><button class="stepButton" onclick="adjustGlass('blur',-1)">−</button><button class="stepButton" onclick="adjustGlass('blur',1)">+</button></span></label></div></div>
   </section>
   <section class="settingsPage" data-settings-page="home">
+    <div class="settingsGroup" id="homeLauncherGroup">
+      <h3 data-en="Default Home Launcher" data-ms="Pelancar Home Lalai">Default Home Launcher</h3>
+      <p class="settingsHint" data-en="Optional. Choose Glass ONN as Home in Android's system dialog, so the remote Home key can open it. Android TV firmware may restrict this. The original launcher is not disabled." data-ms="Pilihan tambahan. Pilih Glass ONN sebagai Home melalui dialog Android supaya butang Home membuka Glass ONN. Sesetengah firmware TV menyekat fungsi ini. Launcher asal tidak dimatikan.">Optional. Choose Glass ONN as Home in Android's system dialog, so the remote Home key can open it. Android TV firmware may restrict this. The original launcher is not disabled.</p>
+      <p class="settingsStatus" id="homeLauncherStatus" aria-live="polite">Checking Android Home support…</p>
+      <div class="settingsButtonRow">
+        <button class="button" id="setDefaultHomeBtn" onclick="requestDefaultHomeLauncher()">Set as Default Home</button>
+        <button class="button" id="checkDefaultHomeBtn" onclick="refreshHomeLauncherStatus()">Check Status</button>
+        <button class="button" id="openHomeSettingsBtn" onclick="openAndroidHomeApps()">Android Home Settings</button>
+      </div>
+    </div>
     <div class="settingsGroup"><h3 data-en="Visible Home Sections" data-ms="Bahagian Dipaparkan">Visible Home Sections</h3><p class="settingsHint" data-en="Choose what appears on your Home screen." data-ms="Pilih apa yang dipaparkan pada skrin utama.">Choose what appears on your Home screen.</p><div class="cardOptions" id="cardButtons"></div></div>
     <div class="settingsGroup"><h3 data-en="App Labels" data-ms="Nama Aplikasi">App Labels</h3><button class="appNameToggle" id="appNameToggle" onclick="toggleAppNames()">Icon labels: OFF</button></div>
     <div class="settingsGroup"><h3 data-en="Layout Presets" data-ms="Preset Susun Atur">Layout Presets</h3><div id="layoutButtons" class="layoutPicker"></div><button class="button" id="rowOrderBtn" onclick="toggleRowOrder()">Order: Movies then Apps</button><h4 data-en="Widget Sizes" data-ms="Saiz Widget">Widget Sizes</h4><div id="widgetEditor" aria-label="Home widget sizes"></div><div class="widgetEditorActions"><button class="button" id="swapInfoBtn" onclick="toggleInfoSide()">⇄ Swap Info &amp; Prayer</button><button class="button" onclick="resetWidgetSizes()">↺ Reset sizes</button></div></div>
@@ -1460,7 +1470,7 @@ html[data-theme][data-panels-transparent] body #ui>.apps .dock .app:focus .iconF
     <div class="settingsGroup"><h3>Phone Companion</h3><p class="settingsHint" data-en="Scan with your phone camera to open Companion. Connect phone and TV to the same Wi-Fi." data-ms="Imbas dengan kamera telefon untuk buka Companion. Telefon dan TV mesti pada Wi-Fi yang sama.">Scan with your phone camera to open Companion. Connect phone and TV to the same Wi-Fi.</p><div class="companionPairRow"><div class="companionQrFrame"><canvas id="companionQr" width="220" height="220" role="img" aria-label="Companion connection QR code" hidden></canvas><div id="companionQrEmpty">Waiting for local address</div></div><div class="companionPairDetails"><p class="settingsStatus" id="companionUrl">Checking local address…</p><p class="companionPairPin" id="companionPin">Pairing PIN: —</p><p class="settingsHint" data-en="Scan QR → open Companion → enter PIN from this TV. No account required." data-ms="Imbas QR → buka Companion → masukkan PIN dari TV ini. Tak perlu akaun.">Scan QR → open Companion → enter PIN from this TV. No account required.</p><button class="button" onclick="updateCompanionInfo()" data-en="↻ Refresh QR" data-ms="↻ Muat semula QR">↻ Refresh QR</button></div></div><p class="settingsHint" data-en="Use a trusted home network. Local Companion uses HTTP, so never enter private credentials through it." data-ms="Gunakan rangkaian rumah dipercayai. Companion menggunakan HTTP setempat, jadi jangan masukkan maklumat rahsia melaluinya.">Use a trusted home network. Local Companion uses HTTP, so never enter private credentials through it.</p></div>
   </section>
   <section class="settingsPage" data-settings-page="about">
-    <div class="settingsGroup"><h3>Glass ONN Launcher</h3><p class="settingsHint">Version 0.7.0 · Dynamic Hero & Focus Engine</p><p class="settingsHint">Weather from Open-Meteo · Prayer times from solat.my · Film metadata from selected catalogues.</p></div>
+    <div class="settingsGroup"><h3>Glass ONN Launcher</h3><p class="settingsHint">Version 0.7.1 · Optional Default Home & Focus Engine</p><p class="settingsHint">Weather from Open-Meteo · Prayer times from solat.my · Film metadata from selected catalogues.</p></div>
     <div class="settingsGroup"><h3>Nature Audio Credits</h3><p class="settingsHint">Birds forest · barracuda1983 · public domain · Wikimedia Commons.</p><p class="settingsHint">Water drops dripping · ZooFari · CC BY-SA 3.0 · Wikimedia Commons. Used without modification.</p><p class="settingsHint">https://commons.wikimedia.org/wiki/File:Birds_forest.ogg<br>https://commons.wikimedia.org/wiki/File:Water_drops_dripping.ogg</p><p class="settingsHint">https://creativecommons.org/licenses/by-sa/3.0/</p></div>
     <div class="settingsGroup"><h3>Privacy</h3><p class="settingsHint">Trakt and TMDB credentials stay on the Android device. No GPS or Accessibility permissions are requested. Projectivy can remain as backup launcher.</p></div>
   </section>
@@ -2215,6 +2225,35 @@ function applyGlass(){
 window.setGlassOpacity=function(value){glassOpacity=Number(value);if(!Number.isFinite(glassOpacity))glassOpacity=50;glassOpacity=Math.max(0,Math.min(100,glassOpacity));applyGlass();if(bridge())Native.setGlassOpacity(Math.round(glassOpacity));};
 window.setGlassBlur=function(value){glassBlur=Number(value);applyGlass();if(bridge())Native.setGlassBlur(Math.round(glassBlur));};
 window.adjustGlass=function(type,delta){if(type==='opacity')setGlassOpacity(Math.max(0,Math.min(100,glassOpacity+delta)));else setGlassBlur(Math.max(0,Math.min(18,glassBlur+delta)));};
+
+function refreshHomeLauncherStatus(){
+ const label=$('homeLauncherStatus'),button=$('setDefaultHomeBtn'),settings=$('openHomeSettingsBtn');
+ if(!label)return;
+ if(!bridge()||!Native.getHomeLauncherState){
+  label.textContent='Home launcher selection is available on an installed Android TV app.';
+  if(button)button.disabled=true;if(settings)settings.disabled=true;return;
+ }
+ let info={};
+ try{info=JSON.parse(Native.getHomeLauncherState()||'{}');}
+ catch(err){label.textContent='Unable to read Android Home status.';return;}
+ if(info.isDefault)label.textContent='✓ Glass ONN is the default Home launcher. Press Home on your remote to test.';
+ else if(info.roleAvailable)label.textContent='Not yet default. Select Glass ONN in the Android confirmation screen.';
+ else if(info.settingsAvailable)label.textContent='Android Home role dialog is unavailable. Try Android Home Settings; your TV firmware may restrict changes.';
+ else label.textContent='This Android TV does not expose Home selection. The stock Home remains unchanged.';
+ if(button)button.disabled=!!info.isDefault||!info.roleAvailable&&!info.settingsAvailable;
+ if(settings)settings.disabled=!info.settingsAvailable;
+}
+window.onHomeLauncherStatusChanged=function(){refreshHomeLauncherStatus();};
+window.requestDefaultHomeLauncher=function(){
+ if(!bridge()||!Native.requestDefaultHome)return;
+ $('homeLauncherStatus').textContent='Opening Android system Home selection…';
+ Native.requestDefaultHome();
+};
+window.openAndroidHomeApps=function(){
+ if(!bridge()||!Native.openAndroidHomeSettings)return;
+ Native.openAndroidHomeSettings();
+};
+
 const SETTINGS_PAGES={
  appearance:{en:['Appearance','Choose the look and feel of your launcher.'],ms:['Penampilan','Pilih rupa dan gaya launcher anda.']},
  home:{en:['Home Screen','Control the sections and layout of Home.'],ms:['Skrin Utama','Kawal bahagian dan susun atur Home.']},
@@ -2302,7 +2341,7 @@ function updateSettingsLanguage(){
 }
 window.showSettings=function(){
  rememberOverlayOrigin();hideOverlay(false);setAeroNav('railSettings');$('settings').classList.add('open');buildThemePicker();buildClockOptions();buildPlaces();buildGallery();buildSources();buildCardOptions();buildLayouts();buildWidgetEditor();buildRecoSources();updateAppNamesUI();updateFxUI();updateCompanionInfo();if($('netflixStatus'))$('netflixStatus').textContent=bridge()&&Native.hasTmdb&&Native.hasTmdb()?t('TMDB bersambung. Cadangan Netflix MY tersedia jika API merespons.','TMDB connected. Netflix MY picks load when API responds.'):t('TMDB belum disambung.','TMDB not connected.');applyLanguage();
- updateSettingsLanguage();switchSettingsTab('appearance');document.querySelector('#settings [data-settings-tab="appearance"]')?.focus();
+ updateSettingsLanguage();switchSettingsTab('appearance');refreshHomeLauncherStatus();document.querySelector('#settings [data-settings-tab="appearance"]')?.focus();
 };
 window.showTraktSettings=function(){showSettings();switchSettingsTab('integrations');$('traktStartButton')?.focus();};
 window.showNetflixSettings=function(){showSettings();switchSettingsTab('integrations');$('tmdbTokenInput')?.focus();};

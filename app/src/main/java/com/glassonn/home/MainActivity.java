@@ -1,6 +1,7 @@
 package com.glassonn.home;
 
 import android.app.Activity;
+import android.app.role.RoleManager;
 import android.view.KeyEvent;
 import android.media.MediaPlayer;
 import android.media.AudioManager;
@@ -46,7 +47,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/** Glass ONN personal TV dashboard. No HOME takeover; no accessibility/overlay/GPS permissions. */
+/** Glass ONN: Home selection is opt-in through Android. No accessibility/overlay/GPS permissions. */
 public class MainActivity extends Activity {
     private final Handler ui = new Handler(Looper.getMainLooper());
     private WebView page;
@@ -146,6 +147,81 @@ public class MainActivity extends Activity {
         companion = new CompanionServer(this);
         page.loadUrl("file:///android_asset/index.html");
         // Offline nature samples are packaged during GitHub build; no first-launch download needed.
+    }
+
+
+    private static final int REQUEST_HOME_ROLE = 7090;
+
+    // All Home choices are initiated by a user action. Never replace/disable the stock launcher.
+    JSONObject homeLauncherState() {
+        JSONObject result=new JSONObject();
+        boolean roleAvailable=false, roleHeld=false, settingsAvailable=false, homeResolved=false;
+        try {
+            if(android.os.Build.VERSION.SDK_INT>=29) {
+                RoleManager manager=getSystemService(RoleManager.class);
+                if(manager!=null) {
+                    roleAvailable=manager.isRoleAvailable(RoleManager.ROLE_HOME);
+                    roleHeld=roleAvailable&&manager.isRoleHeld(RoleManager.ROLE_HOME);
+                }
+            }
+            Intent home=new Intent(Intent.ACTION_MAIN);
+            home.addCategory(Intent.CATEGORY_HOME);
+            ResolveInfo resolved=getPackageManager().resolveActivity(home,PackageManager.MATCH_DEFAULT_ONLY);
+            homeResolved=resolved!=null&&resolved.activityInfo!=null&&getPackageName().equals(resolved.activityInfo.packageName);
+            Intent settings=new Intent(android.provider.Settings.ACTION_HOME_SETTINGS);
+            settingsAvailable=settings.resolveActivity(getPackageManager())!=null;
+        }catch(Exception ignored){}
+        try {
+            result.put("isDefault",roleHeld||homeResolved);
+            result.put("roleAvailable",roleAvailable);
+            result.put("settingsAvailable",settingsAvailable);
+            result.put("systemSelectionOnly",true);
+        }catch(Exception ignored){}
+        return result;
+    }
+    void notifyHomeLauncherState() {
+        sendJs("if(window.onHomeLauncherStatusChanged)window.onHomeLauncherStatusChanged()");
+    }
+    void requestDefaultHome() {
+        ui.post(()->{
+            try{
+                if(android.os.Build.VERSION.SDK_INT>=29){
+                    RoleManager manager=getSystemService(RoleManager.class);
+                    if(manager!=null&&manager.isRoleAvailable(RoleManager.ROLE_HOME)){
+                        if(manager.isRoleHeld(RoleManager.ROLE_HOME)){
+                            Toast.makeText(this,"Glass ONN sudah menjadi Home default",Toast.LENGTH_SHORT).show();
+                            notifyHomeLauncherState();
+                            return;
+                        }
+                        startActivityForResult(manager.createRequestRoleIntent(RoleManager.ROLE_HOME),REQUEST_HOME_ROLE);
+                        return;
+                    }
+                }
+                openAndroidHomeSettings();
+            }catch(Exception ex){
+                Toast.makeText(this,"Pemilihan Home disekat oleh Android TV ini",Toast.LENGTH_LONG).show();
+                notifyHomeLauncherState();
+            }
+        });
+    }
+    void openAndroidHomeSettings() {
+        ui.post(()->{
+            try {
+                startActivity(new Intent(android.provider.Settings.ACTION_HOME_SETTINGS));
+            }catch(Exception ex){
+                Toast.makeText(this,"Firmware TV tidak menyediakan menu Default Home",Toast.LENGTH_LONG).show();
+                notifyHomeLauncherState();
+            }
+        });
+    }
+    @Override protected void onActivityResult(int requestCode,int resultCode,Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        if(requestCode==REQUEST_HOME_ROLE){
+            Toast.makeText(this,resultCode==RESULT_OK?
+                "Pilihan Home dikemas kini. Cuba butang Home pada remote.":
+                "Pilihan Home tidak diubah.",Toast.LENGTH_LONG).show();
+            notifyHomeLauncherState();
+        }
     }
 
     private static final String[] PRIORITIES = {
@@ -534,6 +610,9 @@ public class MainActivity extends Activity {
         @JavascriptInterface public String getPlace(){return ""+MainActivity.this.getPlace();}
         @JavascriptInterface public void setPlace(String s){try{MainActivity.this.setPlace(Integer.parseInt(s));}catch(Exception ignored){}}
         @JavascriptInterface public String getTheme(){return MainActivity.this.getGlassTheme();}
+        @JavascriptInterface public String getHomeLauncherState(){return MainActivity.this.homeLauncherState().toString();}
+        @JavascriptInterface public void requestDefaultHome(){MainActivity.this.requestDefaultHome();}
+        @JavascriptInterface public void openAndroidHomeSettings(){MainActivity.this.openAndroidHomeSettings();}
         @JavascriptInterface public void setTheme(String value){MainActivity.this.setTheme(value);}
         @JavascriptInterface public void reportWallpaperDisplay(String id, boolean ok){MainActivity.this.reportWallpaperDisplay(id,ok);}
         @JavascriptInterface public String getWallpaperMode(){return MainActivity.this.getWallpaperMode();}
@@ -766,6 +845,7 @@ public class MainActivity extends Activity {
             companion.start();
         }
         remoteUpdated();
+        notifyHomeLauncherState();
     }
     @Override protected void onPause(){
         // Paired LAN control is only reachable while Glass ONN is the foreground app.

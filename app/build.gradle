@@ -4,11 +4,12 @@ android {
     namespace 'com.glassonn.home'
     compileSdk 34
     defaultConfig {
+        // Keep package ID stable across updates so Home-role assignment and user data persist.
         applicationId 'com.glassonn.home.v070'
         minSdk 26
         targetSdk 34
-        versionCode 26
-        versionName '0.7.0'
+        versionCode 27
+        versionName '0.7.1'
         // Keep Android installer label in sync with the release version.
         manifestPlaceholders = [glassOnnAppLabel: "Glass ONN v${versionName}"]
     }
