@@ -1347,6 +1347,49 @@ html[data-theme]:not([data-theme="glass"]) #ui>.apps .app:focus{
  outline:2px solid var(--tv-focus)!important;outline-offset:2px!important;
  box-shadow:none!important}
 
+
+/* v0.7.0 hotfix: horizontal row follows focus on ONN D-pad, not just movie backdrop. */
+html[data-theme] body #ui #homeShelfStack .homeTrendScroller,
+html[data-theme] body #ui #homeShelfStack .recentScroller,
+html[data-theme] body #ui #homeShelfStack .traktScroller,
+html[data-theme] body #ui>.apps .dock{
+ overflow-x:auto!important;overflow-y:hidden!important;
+ scroll-behavior:auto!important;scroll-snap-type:none!important;overscroll-behavior-x:contain;
+}
+/* Focus belongs to the visible app artwork, never an oversized empty card frame. */
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .app,
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .app:focus,
+html[data-theme]:not([data-theme="glass"]) #ui>.apps .dock .app:focus{
+ position:relative!important;outline:none!important;outline-offset:0!important;
+ border:0!important;box-shadow:none!important;background:transparent!important;
+ transform:none!important;
+}
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .app .appMedia,
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .app:focus .appMedia,
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .appMedia.appFallback{
+ padding:0!important;border:0!important;outline:none!important;
+ background:transparent!important;background-image:none!important;
+ box-shadow:none!important;transform:none!important;filter:none!important;
+}
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .app .appMedia img{
+ width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+ object-fit:contain!important;border:0!important;outline:none!important;
+ filter:none!important;transition:transform .14s ease-out,filter .14s ease-out;
+}
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .app:focus .appMedia img{
+ transform:scale(1.04)!important;
+ filter:drop-shadow(0 0 4px var(--app-glow,#b4dfff))
+        drop-shadow(0 0 10px var(--app-halo,rgba(160,211,255,.6)))!important;
+}
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .app:focus::after{
+ content:"";position:absolute;left:34%;right:34%;bottom:0;
+ height:3px;border-radius:4px;background:var(--app-glow,#eaf6ff);
+ box-shadow:0 0 5px var(--app-halo,rgba(160,211,255,.6));pointer-events:none;
+}
+html[data-theme][data-panels-transparent] body #ui>.apps .dock .app:focus .iconFallback{
+ color:#fff!important;text-shadow:0 0 10px var(--app-glow,#b4dfff)!important;
+}
+
 </style></head><body>
 <div class="wallpaper" id="w1"></div><div class="wallpaper" id="w2" style="opacity:0"></div><div class="wallpaper" id="w3" style="opacity:0"></div><div class="wallpaper" id="w4" style="opacity:0"></div><div class="wallpaper" id="customImage" style="opacity:0"></div><div class="wallpaper" id="onlineWallpaper" style="opacity:0"></div><div class="wallpaper" id="focusBackdrop" aria-hidden="true"></div><div id="shade"></div>
 <nav id="cinemaRail" aria-label="Main navigation">
@@ -1720,7 +1763,26 @@ function homeShelfItems(row){
 function revealHomeShelf(row){
  const v=$('homeShelfViewport');if(!v||!row)return;
  const y=row.getBoundingClientRect().top-v.getBoundingClientRect().top+v.scrollTop;
+ // Vertical movement only when changing shelves. Horizontal posters are handled separately.
  v.scrollTo({top:Math.max(0,y-3),behavior:'smooth'});
+}
+function revealFocusedCard(el){
+ if(!el||!el.isConnected)return false;
+ // WebView DPAD focus uses preventScroll: explicitly move the card's *own*
+ // horizontal strip. Moving the outer shelf alone changes the hero but hides cards.
+ const strip=el.closest('.homeTrendScroller,.recentScroller,.traktScroller,.dock');
+ if(!strip)return false;
+ const box=el.getBoundingClientRect(),view=strip.getBoundingClientRect(),margin=12;
+ if(!box.width||!view.width)return false;
+ let delta=0;
+ if(box.right>view.right-margin)delta=box.right-(view.right-margin);
+ else if(box.left<view.left+margin)delta=box.left-(view.left+margin);
+ if(Math.abs(delta)<1)return true;
+ const max=Math.max(0,strip.scrollWidth-strip.clientWidth);
+ const target=Math.max(0,Math.min(max,strip.scrollLeft+delta));
+ // Instant response on remote press; only backdrop uses a soft animation.
+ try{strip.scrollTo({left:target,behavior:'instant'});}catch(e){strip.scrollLeft=target;}
+ return true;
 }
 
 // v0.7.0 Focus Engine: stable keys + per-row remembered selection.
@@ -1762,7 +1824,7 @@ function focusSafe(el,reveal=true){
  if(reveal){
   const row=el.closest('.traktHome,.recentHome,.trendShelf');
   if(row)revealHomeShelf(row);
-  else if(el.closest('#ui>.apps'))el.scrollIntoView({inline:'nearest',block:'nearest'});
+  revealFocusedCard(el);
  }
  return true;
 }
@@ -1794,6 +1856,8 @@ document.addEventListener('focusin',e=>{
  if(info.area==='nav'){focusMemory.lastNav=info.key;return;}
  focusMemory.lastHome=info;
  if(info.area==='shelf')focusMemory.rowKey.set(info.row,info.key);
+ // Also handle real Android WebView focus events (not only scripted DPAD moves).
+ revealFocusedCard(e.target);
  try{localStorage.setItem('glassonn_focus_memory_v070',JSON.stringify(info));}catch(err){}
 });
 
@@ -1807,7 +1871,7 @@ function navigateHomeShelf(key,current){
   const cards=[...dock.querySelectorAll('.app')].filter(el=>el.getClientRects().length>0),index=cards.indexOf(current);
   if(key==='ArrowLeft'||key==='ArrowRight'){
    const next=cards[index+(key==='ArrowRight'?1:-1)];
-   if(next){next.focus({preventScroll:true});return true;}
+   if(next){focusSafe(next);return true;}
    if(key==='ArrowLeft'){focusSafe($(focusMemory.lastNav||'railHome'),false);return true;}
    return true;
   }
