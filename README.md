@@ -24,3 +24,12 @@ Historical ZIP archives are left untouched in the repo.
 - Dynamic movie billboard uses the selected card's real metadata (title/type/year/overview) and available artwork, with safe text insertion and a graceful image fallback. The default centered clock and prayer view returns when movie focus ends.
 - Central palette tokens for Glass, Pastel, Grey, Dark, Colourful and Bright; blur is confined to Glass. Home panel opacity remains 0–100 percent in every theme.
 - This is a separate test package `com.glassonn.home.v070`, to preserve prior test builds and local data. No IPTV playback features or third-party GPL code were copied.
+
+## v0.7.2 – Balanced nature audio and reusable Trakt app ID
+
+- Nature audio is shipped as short, level-balanced OGG clips. The sources are stored in `app/src/main/assets/nature/`. GitHub Actions runs `scripts/prepare-zen-audio.sh` before building; it trims/normalizes the recordings in the temporary build workspace only.
+- Clear birds and Cloudy breeze are audible, Rain is gentler, Storm uses a short thunder cue aligned with the visible lightning frame. Each type has a separate volume slider in Settings → Prayer & Weather.
+- Playback opens the OGG directly from the APK, not an Android cache copy; outdated recordings cannot persist after an update.
+- GitHub Actions can prefill the **public OAuth Trakt Client ID** at build time. Set a repository Actions secret called `GLASSONN_TRAKT_CLIENT_ID` containing **only the Client ID** from your Trakt application. Builds inject it into `BuildConfig.DEFAULT_TRAKT_CLIENT_ID`. No Client Secret, password, access token or refresh token is embedded.
+- If that secret is absent, the app still lets you type your Client ID once and reuses the ID stored in encrypted preferences on future **in-place updates of the same package ID** `com.glassonn.home.v070`. Connecting a new installation to your Trakt account still requires your explicit device-code authorization.
+- The Client ID is an app identifier, **not a secret**; anyone with the built APK could extract it. This workflow keeps it out of the public source history, but does not make it cryptographically secret.
