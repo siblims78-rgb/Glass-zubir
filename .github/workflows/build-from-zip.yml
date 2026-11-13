@@ -72,6 +72,8 @@ jobs:
         with:
           gradle-version: '8.9'
       - name: Compile debug APK
+        env:
+          GLASSONN_TRAKT_CLIENT_ID: ${{ secrets.GLASSONN_TRAKT_CLIENT_ID }}
         run: gradle :app:assembleDebug --no-daemon
       - name: Verify built APK identity
         shell: bash
@@ -81,8 +83,8 @@ jobs:
           AAPT="$ANDROID_HOME/build-tools/34.0.0/aapt"
           "$AAPT" dump badging "$APK" | tee "$RUNNER_TEMP/apk-badging.txt"
           grep -F "name='com.glassonn.home.v070'" "$RUNNER_TEMP/apk-badging.txt"
-          grep -F "versionName='0.7.1'" "$RUNNER_TEMP/apk-badging.txt"
-          grep -F "application-label:'Glass ONN v0.7.1'" "$RUNNER_TEMP/apk-badging.txt"
+          grep -F "versionName='0.7.2'" "$RUNNER_TEMP/apk-badging.txt"
+          grep -F "application-label:'Glass ONN v0.7.2'" "$RUNNER_TEMP/apk-badging.txt"
       - name: Verify Home launcher registration
         shell: bash
         run: |

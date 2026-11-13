@@ -25,7 +25,7 @@ import javax.crypto.spec.GCMParameterSpec;
 
 /**
  * Optional personal Trakt OAuth device-code integration. No Trakt account password,
- * OAuth tokens, or developer credentials are compiled into the APK or served over Companion HTTP.
+ * OAuth tokens or private developer credentials are compiled into the APK or served over Companion HTTP.
  * Credentials and tokens are encrypted with a non-exportable Android Keystore key at rest.
  *
  * Trakt recommends Authorization Code + PKCE for public apps with verified HTTPS App Links.
@@ -59,6 +59,9 @@ final class TraktSync {
                 tokenExpires=j.optLong("expires",0);
             }
         } catch(Exception ex) { disconnect(); }
+        // Public OAuth Client ID may come from build; never embed an account token.
+        if(!credential(clientId)&&credential(BuildConfig.DEFAULT_TRAKT_CLIENT_ID))
+            clientId=BuildConfig.DEFAULT_TRAKT_CLIENT_ID;
     }
     private SharedPreferences prefs(){return context.getSharedPreferences("glassonn_trakt",Context.MODE_PRIVATE);}
     private SecretKey aesKey() throws Exception {
@@ -92,10 +95,13 @@ final class TraktSync {
         j.put("access",accessToken);j.put("refresh",refreshToken);j.put("expires",tokenExpires);
         if(!prefs().edit().putString(PREF,encrypt(j.toString())).commit())throw new IllegalStateException("Unable to save token");
     }
-    synchronized String getPublicClientId(){return clientId.matches("[A-Za-z0-9._-]{20,256}")?clientId:"";}
+    synchronized String getPublicClientId(){
+        if(credential(clientId))return clientId;
+        return credential(BuildConfig.DEFAULT_TRAKT_CLIENT_ID)?BuildConfig.DEFAULT_TRAKT_CLIENT_ID:"";
+    }
         synchronized JSONObject state() {
         JSONObject j=new JSONObject();
-        try{j.put("configured",!clientId.isEmpty());j.put("connected",!accessToken.isEmpty());
+        try{j.put("configured",!getPublicClientId().isEmpty());j.put("connected",!accessToken.isEmpty());
             j.put("busy",busy.get());j.put("waiting",!deviceCode.isEmpty()&&System.currentTimeMillis()<deviceExpiry);
             j.put("expiresAt",tokenExpires);}catch(Exception ignored){}
         return j;
@@ -111,14 +117,18 @@ final class TraktSync {
     private void error(String msg){JSONObject j=new JSONObject();try{j.put("message",msg);}catch(Exception ignored){}emit("error",j);}
     private static boolean credential(String x){return x!=null&&x.length()>=20&&x.length()<=256&&x.matches("[A-Za-z0-9._-]+");}
     void begin(String id) {
-        if(!credential(id)){error("Client ID Trakt tidak sah. Masukkan Client ID sahaja.");return;}
+        id=id==null?"":id.trim();
+        if(id.isEmpty())id=getPublicClientId();
+        if(!credential(id)){error("Client ID belum ada. Masukkan sekali sahaja atau tetapkan ID dalam build.");return;}
+        synchronized(this){if(id.equals(clientId)&&!accessToken.isEmpty()){emit("connected",state());return;}}
         if(!busy.compareAndSet(false,true))return;
+        final String selectedId=id;
         new Thread(()->{
             try{
-                synchronized(this){session++;clientId=id;accessToken="";refreshToken="";tokenExpires=0;deviceCode="";save();}
-                JSONObject request=new JSONObject().put("client_id",id);
-                JSONObject response=http(AUTH+"/oauth/device/code",request,id,null);
-                synchronized(this){if(!clientId.equals(id))return;deviceCode=response.getString("device_code");
+                synchronized(this){session++;clientId=selectedId;accessToken="";refreshToken="";tokenExpires=0;deviceCode="";save();}
+                JSONObject request=new JSONObject().put("client_id",selectedId);
+                JSONObject response=http(AUTH+"/oauth/device/code",request,selectedId,null);
+                synchronized(this){if(!clientId.equals(selectedId))return;deviceCode=response.getString("device_code");
                     interval=Math.max(5,Math.min(60,response.optInt("interval",5)));
                     deviceExpiry=System.currentTimeMillis()+Math.min(1800,response.optInt("expires_in",600))*1000L;
                     lastPoll=0;

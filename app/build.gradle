@@ -8,11 +8,18 @@ android {
         applicationId 'com.glassonn.home.v070'
         minSdk 26
         targetSdk 34
-        versionCode 27
-        versionName '0.7.1'
+        versionCode 28
+        versionName '0.7.2'
         // Keep Android installer label in sync with the release version.
         manifestPlaceholders = [glassOnnAppLabel: "Glass ONN v${versionName}"]
+        // Public OAuth Client ID, optionally provided as a GitHub Actions secret.
+        // Never bundle a Trakt Client Secret, access token or refresh token.
+        def publicTraktId=(System.getenv('GLASSONN_TRAKT_CLIENT_ID') ?: '').trim()
+        if(publicTraktId && !(publicTraktId ==~ /[A-Za-z0-9._-]{20,256}/))
+            throw new GradleException('Invalid GLASSONN_TRAKT_CLIENT_ID')
+        buildConfigField 'String','DEFAULT_TRAKT_CLIENT_ID','"' + publicTraktId + '"'
     }
+    buildFeatures { buildConfig true }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
