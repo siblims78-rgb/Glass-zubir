@@ -97,7 +97,7 @@ jobs:
               raise SystemExit("Trakt Client ID secret is missing or invalid.")
           apk = "app/build/outputs/apk/debug/app-debug.apk"
           with zipfile.ZipFile(apk) as bundle:
-              dex_names = [name for name in bundle.namelist() if re.fullmatch(r"classes[0-9]*\\.dex", name)]
+              dex_names = [name for name in bundle.namelist() if name.startswith("classes") and name.endswith(".dex")]
               found = any(client_id.encode("ascii") in bundle.read(name) for name in dex_names)
           if not found:
               raise SystemExit("Trakt Client ID was not found in the compiled APK.")
