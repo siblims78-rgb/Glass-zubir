@@ -84,6 +84,25 @@ jobs:
         env:
           GLASSONN_TRAKT_CLIENT_ID: ${{ secrets.GLASSONN_TRAKT_CLIENT_ID }}
         run: gradle :app:assembleDebug --no-daemon
+      - name: Verify Trakt Client ID embedded in APK
+        shell: bash
+        env:
+          GLASSONN_TRAKT_CLIENT_ID: ${{ secrets.GLASSONN_TRAKT_CLIENT_ID }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os, re, zipfile
+          client_id = os.environ.get("GLASSONN_TRAKT_CLIENT_ID", "").strip()
+          if not re.fullmatch(r"[A-Za-z0-9._-]{20,256}", client_id):
+              raise SystemExit("Trakt Client ID secret is missing or invalid.")
+          apk = "app/build/outputs/apk/debug/app-debug.apk"
+          with zipfile.ZipFile(apk) as bundle:
+              dex_names = [name for name in bundle.namelist() if re.fullmatch(r"classes[0-9]*\\.dex", name)]
+              found = any(client_id.encode("ascii") in bundle.read(name) for name in dex_names)
+          if not found:
+              raise SystemExit("Trakt Client ID was not found in the compiled APK.")
+          print("Trakt Client ID successfully bundled (value withheld).")
+          PY
       - name: Verify built APK identity
         shell: bash
         run: |
